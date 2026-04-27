@@ -1,11 +1,26 @@
-import { useState } from 'react';
-import { LISTINGS } from '../data';
+import { useState, useEffect } from 'react';
 import ListingCard from '../components/ListingCard';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
+import { Listing } from '../data';
 
 export default function Profile() {
   const [activeTab, setActiveTab] = useState('Active Listings');
   const navigate = useNavigate();
+  const { user } = useAuth();
+  
+  const [listings, setListings] = useState<Listing[]>([]);
+  
+  useEffect(() => {
+    if (user) {
+      supabase.from('listings').select('*').eq('seller_id', user.id).then(({ data, error }) => {
+        if (!error && data) {
+          setListings(data);
+        }
+      });
+    }
+  }, [user]);
   
   const tabs = ['Active Listings', 'Sold', 'Purchases', 'Reviews'];
   
@@ -13,21 +28,21 @@ export default function Profile() {
     <div className="page" style={{display: 'block'}}>
       <div className="profile-header">
         <div className="profile-top">
-          <div className="profile-avatar">م</div>
+          <div className="profile-avatar">{user?.user_metadata?.full_name?.charAt(0)?.toUpperCase() || 'U'}</div>
           <div>
-            <div className="profile-name">Musab Alshehri</div>
-            <div className="profile-bio">Architecture student · Riyadh 🇸🇦 · Vintage & streetwear collector</div>
+            <div className="profile-name">{user?.user_metadata?.full_name || 'User'}</div>
+            <div className="profile-bio">@{user?.user_metadata?.username || 'username'}</div>
             <div className="profile-stats">
               <div>
-                <div className="profile-stat-num">12</div>
+                <div className="profile-stat-num">{listings.length}</div>
                 <div className="profile-stat-label">Listings</div>
               </div>
               <div>
-                <div className="profile-stat-num">34</div>
+                <div className="profile-stat-num">0</div>
                 <div className="profile-stat-label">Sales</div>
               </div>
               <div>
-                <div className="profile-stat-num">4.9 ⭐</div>
+                <div className="profile-stat-num">5.0 ⭐</div>
                 <div className="profile-stat-label">Rating</div>
               </div>
             </div>
@@ -44,7 +59,7 @@ export default function Profile() {
           ))}
         </div>
         <div className="listings-grid">
-          {LISTINGS.slice(0, 6).map(listing => (
+          {listings.map(listing => (
             <ListingCard key={listing.id} listing={listing} />
           ))}
         </div>

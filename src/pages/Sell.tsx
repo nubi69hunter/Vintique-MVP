@@ -1,11 +1,65 @@
 import { useState } from 'react';
 import { useUI } from '../contexts/UIContext';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Sell() {
   const [step, setStep] = useState(1);
   const { showToast } = useUI();
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('Tops & Shirts');
+  const [size, setSize] = useState('M');
+  const [brand, setBrand] = useState('');
+  const [condition, setCondition] = useState('Good');
+  const [price, setPrice] = useState('');
+  const [city, setCity] = useState('Riyadh');
+  const [loading, setLoading] = useState(false);
+
+  const handleList = async () => {
+    if (!user) {
+      showToast('Please login to sell items.');
+      navigate('/auth');
+      return;
+    }
+
+    if (!title || !price) {
+      showToast('Please fill in title and price.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const { error } = await supabase.from('listings').insert([
+        {
+          title,
+          description,
+          price: Number(price),
+          category,
+          size,
+          brand,
+          condition,
+          city,
+          seller_id: user.id
+        }
+      ]);
+
+      if (error) {
+        showToast(error.message);
+      } else {
+        showToast('Item listed successfully! 🎉');
+        navigate('/');
+      }
+    } catch (err: any) {
+      showToast(err.message || 'Error listing item');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="page" style={{display: 'block'}}>
@@ -44,16 +98,16 @@ export default function Sell() {
             <div className="sell-form">
               <div className="form-group">
                 <label className="form-label">Title</label>
-                <input className="form-input" type="text" placeholder="e.g. Zara Linen Blazer, Beige" />
+                <input className="form-input" type="text" placeholder="e.g. Zara Linen Blazer, Beige" value={title} onChange={e => setTitle(e.target.value)} />
               </div>
               <div className="form-group">
                 <label className="form-label">Description</label>
-                <textarea className="form-textarea" placeholder="Describe the item — condition, fit, any flaws, measurements..."></textarea>
+                <textarea className="form-textarea" placeholder="Describe the item — condition, fit, any flaws, measurements..." value={description} onChange={e => setDescription(e.target.value)}></textarea>
               </div>
               <div className="form-row">
                 <div className="form-group">
                   <label className="form-label">Category</label>
-                  <select className="form-select">
+                  <select className="form-select" value={category} onChange={e => setCategory(e.target.value)}>
                     <option>Tops & Shirts</option>
                     <option>Dresses</option>
                     <option>Pants & Jeans</option>
@@ -65,7 +119,7 @@ export default function Sell() {
                 </div>
                 <div className="form-group">
                   <label className="form-label">Size</label>
-                  <select className="form-select">
+                  <select className="form-select" value={size} onChange={e => setSize(e.target.value)}>
                     <option>XS</option>
                     <option>S</option>
                     <option>M</option>
@@ -78,11 +132,11 @@ export default function Sell() {
               <div className="form-row">
                 <div className="form-group">
                   <label className="form-label">Brand</label>
-                  <input className="form-input" type="text" placeholder="e.g. Zara, H&M, Nike" />
+                  <input className="form-input" type="text" placeholder="e.g. Zara, H&M, Nike" value={brand} onChange={e => setBrand(e.target.value)} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Condition</label>
-                  <select className="form-select">
+                  <select className="form-select" value={condition} onChange={e => setCondition(e.target.value)}>
                     <option>New with tags</option>
                     <option>Like new</option>
                     <option>Good</option>
@@ -104,7 +158,7 @@ export default function Sell() {
             <div className="sell-form">
               <div className="form-group">
                 <label className="form-label">Price (SAR)</label>
-                <input className="form-input" type="number" placeholder="0" style={{ fontSize: '1.5rem', fontFamily: '"Bebas Neue", sans-serif', letterSpacing: '0.05em' }} />
+                <input className="form-input" type="number" placeholder="0" style={{ fontSize: '1.5rem', fontFamily: '"Bebas Neue", sans-serif', letterSpacing: '0.05em' }} value={price} onChange={e => setPrice(e.target.value)} />
               </div>
               <div style={{ padding: '1.2rem', background: '#fff', border: '1px solid var(--border)', fontSize: '0.82rem', color: 'var(--muted)', lineHeight: '1.8' }}>
                 <div style={{ fontWeight: 500, color: 'var(--black)', marginBottom: '0.5rem', fontSize: '0.75rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Fee breakdown</div>
@@ -112,7 +166,7 @@ export default function Sell() {
               </div>
               <div className="form-group">
                 <label className="form-label">Shipping from</label>
-                <select className="form-select">
+                <select className="form-select" value={city} onChange={e => setCity(e.target.value)}>
                   <option>Riyadh</option>
                   <option>Jeddah</option>
                   <option>Dammam</option>
@@ -124,10 +178,7 @@ export default function Sell() {
             </div>
             <div className="sell-nav">
               <button className="btn-secondary" style={{ width: 'auto', padding: '0.75rem 2rem' }} onClick={() => setStep(2)}>← Back</button>
-              <button className="btn-primary" style={{ width: 'auto', padding: '0.75rem 2rem' }} onClick={() => {
-                showToast('Item listed successfully! 🎉');
-                navigate('/');
-              }}>List Item 🚀</button>
+              <button className="btn-primary" style={{ width: 'auto', padding: '0.75rem 2rem' }} onClick={handleList} disabled={loading}>{loading ? 'Listing...' : 'List Item 🚀'}</button>
             </div>
           </div>
         )}

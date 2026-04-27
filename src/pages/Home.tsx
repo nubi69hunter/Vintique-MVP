@@ -1,7 +1,23 @@
+import { useEffect, useState } from 'react';
 import ListingCard from '../components/ListingCard';
-import { LISTINGS } from '../data';
+import { Listing } from '../data';
+import { supabase } from '../lib/supabase';
 
 export default function Home() {
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchListings() {
+      const { data, error } = await supabase.from('listings').select('*').order('id', { ascending: false });
+      if (!error && data) {
+        setListings(data);
+      }
+      setLoading(false);
+    }
+    fetchListings();
+  }, []);
+
   return (
     <div className="page" style={{display: 'block'}}>
       <div className="home-layout">
@@ -52,7 +68,7 @@ export default function Home() {
         {/* LISTINGS */}
         <main className="listings-area">
           <div className="listings-header">
-            <div className="listings-count">{LISTINGS.length} items found</div>
+            <div className="listings-count">{loading ? 'Loading...' : `${listings.length} items found`}</div>
             <select className="sort-select">
               <option>Newest first</option>
               <option>Price: low to high</option>
@@ -61,7 +77,7 @@ export default function Home() {
             </select>
           </div>
           <div className="listings-grid">
-            {LISTINGS.map(listing => (
+            {listings.map(listing => (
               <ListingCard key={listing.id} listing={listing} />
             ))}
           </div>
