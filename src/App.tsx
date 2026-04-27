@@ -7,6 +7,7 @@ import Sell from './pages/Sell';
 import Profile from './pages/Profile';
 import Toast from './components/Toast';
 import ChatModal from './components/ChatModal';
+import AuthModal from './components/AuthModal';
 import { UIProvider } from './contexts/UIContext';
 import { AuthProvider } from './contexts/AuthContext';
 
@@ -24,6 +25,7 @@ export default function App() {
             <Route path="/profile" element={<Profile />} />
           </Routes>
           <ChatModal />
+          <AuthModal />
           <Toast />
         </Router>
       </UIProvider>

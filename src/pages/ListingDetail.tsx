@@ -9,7 +9,7 @@ export default function ListingDetail() {
   const { id } = useParams<{ id: string }>();
   const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
-  const { showToast, openChat } = useUI();
+  const { showToast, openChat, openAuthModal } = useUI();
   const [activeThumb, setActiveThumb] = useState(0);
   const { user } = useAuth();
   const [buying, setBuying] = useState(false);
@@ -25,7 +25,7 @@ export default function ListingDetail() {
 
   const handleBuy = async () => {
     if (!user) {
-      showToast('Please login to buy items.');
+      openAuthModal();
       return;
     }
     if (!listing) return;
@@ -42,7 +42,7 @@ export default function ListingDetail() {
       if (error) {
         showToast(error.message);
       } else {
-        showToast('Order placed! The seller will contact you to arrange a meetup. Shipping coming soon.');
+        showToast('Order placed! Seller will contact you to arrange a meetup.');
       }
     } catch (e: any) {
       showToast(e.message || 'Error occurred while placing order');

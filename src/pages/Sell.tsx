@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 export default function Sell() {
   const [step, setStep] = useState(1);
-  const { showToast } = useUI();
+  const { showToast, openAuthModal } = useUI();
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -22,8 +22,7 @@ export default function Sell() {
 
   const handleList = async () => {
     if (!user) {
-      showToast('Please login to sell items.');
-      navigate('/auth');
+      openAuthModal();
       return;
     }
 
@@ -34,6 +33,10 @@ export default function Sell() {
 
     try {
       setLoading(true);
+      const sellerName = user.user_metadata?.username
+        ? `@${String(user.user_metadata.username).replace(/^@/, '')}`
+        : user.email?.split('@')[0] || 'seller';
+
       const { error } = await supabase.from('listings').insert([
         {
           title,
@@ -44,7 +47,8 @@ export default function Sell() {
           brand,
           condition,
           city,
-          seller_id: user.id
+          seller_id: user.id,
+          seller: sellerName,
         }
       ]);
 

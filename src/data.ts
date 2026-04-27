@@ -1,5 +1,5 @@
 export interface Listing {
-  id: number;
+  id: string | number;
   emoji?: string;
   title: string;
   price: number;
