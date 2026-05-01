@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useUI } from '../contexts/UIContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
@@ -20,6 +20,40 @@ export default function Sell() {
   const [city, setCity] = useState('Riyadh');
   const [loading, setLoading] = useState(false);
 
+  const [photos, setPhotos] = useState<File[]>([]);
+  const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (photos.length + files.length > 8) {
+      showToast('Max 8 photos allowed.');
+      return;
+    }
+    const newPreviews = files.map(f => URL.createObjectURL(f));
+    setPhotos(prev => [...prev, ...files]);
+    setPhotoPreviews(prev => [...prev, ...newPreviews]);
+    e.target.value = '';
+  };
+
+  const removePhoto = (i: number) => {
+    setPhotos(prev => prev.filter((_, idx) => idx !== i));
+    setPhotoPreviews(prev => prev.filter((_, idx) => idx !== i));
+  };
+
+  const uploadPhotos = async (userId: string): Promise<string[]> => {
+    const urls: string[] = [];
+    for (const file of photos) {
+      const ext = file.name.split('.').pop();
+      const path = `listings/${userId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error } = await supabase.storage.from('listing-photos').upload(path, file);
+      if (error) throw new Error(error.message);
+      const { data } = supabase.storage.from('listing-photos').getPublicUrl(path);
+      urls.push(data.publicUrl);
+    }
+    return urls;
+  };
+
   const handleList = async () => {
     if (!user) {
       openAuthModal();
@@ -37,6 +71,8 @@ export default function Sell() {
         ? `@${String(user.user_metadata.username).replace(/^@/, '')}`
         : user.email?.split('@')[0] || 'seller';
 
+      const photoUrls = photos.length > 0 ? await uploadPhotos(user.id) : [];
+
       const { error } = await supabase.from('listings').insert([
         {
           title,
@@ -49,6 +85,7 @@ export default function Sell() {
           city,
           seller_id: user.id,
           seller: sellerName,
+          photo_urls: photoUrls.length > 0 ? photoUrls : null,
         }
       ]);
 
@@ -66,7 +103,7 @@ export default function Sell() {
   };
 
   return (
-    <div className="page" style={{display: 'block'}}>
+    <div className="page" style={{ display: 'block' }}>
       <div className="sell-layout">
         <div className="sell-header">
           <div className="sell-title">List an Item</div>
@@ -81,16 +118,23 @@ export default function Sell() {
         {/* STEP 1: PHOTOS */}
         {step === 1 && (
           <div className="sell-section active">
-            <div className="upload-zone" onClick={() => showToast('Photo upload coming with Supabase integration!')}>
+            <input ref={fileInputRef} type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handlePhotoChange} />
+            <div className="upload-zone" onClick={() => fileInputRef.current?.click()}>
               <div className="upload-icon">📸</div>
               <div className="upload-text">Tap to upload photos</div>
               <div className="upload-subtext">JPG, PNG up to 10MB · Up to 8 photos</div>
             </div>
-            <div className="uploaded-photos">
-              <div className="photo-thumb" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', background: '#e8e2d8' }}>👗</div>
-              <div className="photo-thumb" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', background: '#d4cec4' }}>👗</div>
-            </div>
-            <div className="sell-nav" style={{justifyContent: 'flex-end'}}>
+            {photoPreviews.length > 0 && (
+              <div className="uploaded-photos">
+                {photoPreviews.map((src, i) => (
+                  <div key={i} className="photo-thumb">
+                    <img src={src} alt={`preview ${i + 1}`} />
+                    <button className="photo-remove" onClick={() => removePhoto(i)}>✕</button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="sell-nav" style={{ justifyContent: 'flex-end' }}>
               <button className="btn-primary" style={{ width: 'auto', padding: '0.75rem 2rem' }} onClick={() => setStep(2)}>Next — Details →</button>
             </div>
           </div>

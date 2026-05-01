@@ -189,6 +189,18 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; 
 .empty-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--black); margin-bottom: 0.5rem; }
 .empty-text { font-size: 0.88rem; }
 
+/* BUY NOW COMING SOON */
+.btn-coming-soon { padding: 1rem; background: var(--border); color: var(--muted); border: none; cursor: not-allowed; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; width: 100%; opacity: 0.7; }
+.coming-soon-note { font-size: 0.78rem; color: var(--muted); text-align: center; padding: 0.5rem 0; line-height: 1.5; }
+
+/* ONBOARDING */
+.onboarding-layout { min-height: calc(100vh - 70px); display: flex; align-items: center; justify-content: center; padding: 2rem; }
+.onboarding-box { width: 100%; max-width: 520px; }
+.onboarding-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; margin-bottom: 0.5rem; }
+.onboarding-subtitle { font-size: 0.88rem; color: var(--muted); margin-bottom: 2.5rem; }
+.onboarding-avatar-upload { width: 90px; height: 90px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; margin: 0 auto 2rem; border: 2px dashed var(--muted); transition: border-color 0.2s; overflow: hidden; }
+.onboarding-avatar-upload:hover { border-color: var(--rust); }
+
 /* RESPONSIVE */
 @media(max-width: 768px) {
   .home-layout { grid-template-columns: 1fr; }

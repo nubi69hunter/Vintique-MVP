@@ -11,6 +11,8 @@ export interface Listing {
   brand: string;
   description: string;
   city?: string;
+  photo_urls?: string[];
+  created_at?: string;
 }
 
 export const LISTINGS: Listing[] = [

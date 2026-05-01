@@ -9,7 +9,7 @@ import { Listing } from '../data';
 export default function Profile() {
   const [activeTab, setActiveTab] = useState('Active Listings');
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const { openAuthModal } = useUI();
   const [listings, setListings] = useState<Listing[]>([]);
 
@@ -32,24 +32,37 @@ export default function Profile() {
       <div style={{ fontSize: '1.1rem', marginBottom: '1.5rem', color: 'var(--muted)' }}>
         Please log in to view your profile.
       </div>
-      <button
-        className="btn-primary"
-        style={{ width: 'auto', padding: '0.75rem 2.5rem' }}
-        onClick={openAuthModal}
-      >
+      <button className="btn-primary" style={{ width: 'auto', padding: '0.75rem 2.5rem' }} onClick={openAuthModal}>
         Login
       </button>
     </div>
   );
 
+  const avatarLetter = profile?.first_name?.charAt(0)?.toUpperCase()
+    || user.user_metadata?.full_name?.charAt(0)?.toUpperCase()
+    || 'U';
+
+  const displayName = profile
+    ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || user.email || 'User'
+    : user.user_metadata?.full_name || user.email || 'User';
+
+  const username = profile?.username || user.user_metadata?.username || 'username';
+  const city = profile?.city || '';
+
   return (
-    <div className="page" style={{display: 'block'}}>
+    <div className="page" style={{ display: 'block' }}>
       <div className="profile-header">
         <div className="profile-top">
-          <div className="profile-avatar">{user.user_metadata?.full_name?.charAt(0)?.toUpperCase() || 'U'}</div>
+          <div className="profile-avatar" style={{ overflow: 'hidden' }}>
+            {profile?.avatar_url ? (
+              <img src={profile.avatar_url} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+            ) : (
+              <span>{avatarLetter}</span>
+            )}
+          </div>
           <div>
-            <div className="profile-name">{user.user_metadata?.full_name || user.email || 'User'}</div>
-            <div className="profile-bio">@{user.user_metadata?.username || 'username'}</div>
+            <div className="profile-name">{displayName}</div>
+            <div className="profile-bio">@{username}{city ? ` · ${city}` : ''}</div>
             <div className="profile-stats">
               <div>
                 <div className="profile-stat-num">{listings.length}</div>

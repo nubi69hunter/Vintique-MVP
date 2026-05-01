@@ -3,8 +3,14 @@ import { useAuth } from '../contexts/AuthContext';
 import { useUI } from '../contexts/UIContext';
 
 export default function Navbar() {
-  const { user, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const { openAuthModal } = useUI();
+
+  const displayName = profile?.username
+    ? `@${profile.username}`
+    : user?.user_metadata?.username
+    ? `@${user.user_metadata.username}`
+    : 'Profile';
 
   return (
     <nav>
@@ -17,9 +23,7 @@ export default function Navbar() {
         <Link className="nav-link" to="/">Browse</Link>
         {user ? (
           <>
-            <Link className="nav-link" to="/profile">
-              {user.user_metadata?.username ? `@${user.user_metadata.username}` : 'Profile'}
-            </Link>
+            <Link className="nav-link" to="/profile">{displayName}</Link>
             <Link className="btn-sell" to="/sell">+ Sell</Link>
             <button
               className="nav-link"
