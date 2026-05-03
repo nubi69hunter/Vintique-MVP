@@ -7,8 +7,9 @@ import Auth from './pages/Auth';
 import Sell from './pages/Sell';
 import Profile from './pages/Profile';
 import Onboarding from './pages/Onboarding';
+import Inbox from './pages/Inbox';
+import Conversation from './pages/Conversation';
 import Toast from './components/Toast';
-import ChatModal from './components/ChatModal';
 import AuthModal from './components/AuthModal';
 import { UIProvider } from './contexts/UIContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -42,8 +43,9 @@ export default function App() {
             <Route path="/sell" element={<Sell />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/inbox" element={<Inbox />} />
+            <Route path="/inbox/:listingId/:otherUserId" element={<Conversation />} />
           </Routes>
-          <ChatModal />
           <AuthModal />
           <Toast />
         </Router>

@@ -1,0 +1,193 @@
+import { useEffect, useState, useRef } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { useUI } from '../contexts/UIContext';
+import { supabase } from '../lib/supabase';
+import { Listing } from '../data';
+
+interface Message {
+  id: string;
+  sender_id: string;
+  receiver_id: string;
+  listing_id: string;
+  content: string;
+  created_at: string;
+  is_read: boolean;
+}
+
+interface OtherProfile {
+  id: string;
+  username: string;
+  first_name: string | null;
+  avatar_url: string | null;
+}
+
+function formatTime(date: Date): string {
+  const diff = Date.now() - date.getTime();
+  const hours = Math.floor(diff / 3600000);
+  if (hours < 1) return 'just now';
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d ago`;
+  return date.toLocaleDateString('en', { month: 'short', day: 'numeric' });
+}
+
+export default function Conversation() {
+  const { listingId, otherUserId } = useParams<{ listingId: string; otherUserId: string }>();
+  const { user, profile } = useAuth();
+  const { openAuthModal } = useUI();
+  const navigate = useNavigate();
+
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputVal, setInputVal] = useState('');
+  const [sending, setSending] = useState(false);
+  const [listing, setListing] = useState<Listing | null>(null);
+  const [otherProfile, setOtherProfile] = useState<OtherProfile | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  useEffect(() => {
+    if (!user || !listingId || !otherUserId) return;
+
+    supabase.from('listings').select('*').eq('id', listingId).single()
+      .then(({ data }) => { if (data) setListing(data); });
+
+    supabase.from('profiles').select('*').eq('id', otherUserId).single()
+      .then(({ data }) => { if (data) setOtherProfile(data); });
+
+    supabase.from('messages').select('*')
+      .eq('listing_id', listingId)
+      .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
+      .order('created_at', { ascending: true })
+      .then(({ data }) => {
+        if (data) {
+          const filtered = data.filter(m =>
+            (m.sender_id === user.id && m.receiver_id === otherUserId) ||
+            (m.sender_id === otherUserId && m.receiver_id === user.id)
+          );
+          setMessages(filtered);
+        }
+      });
+
+    supabase.from('messages')
+      .update({ is_read: true })
+      .eq('listing_id', listingId)
+      .eq('receiver_id', user.id)
+      .eq('sender_id', otherUserId)
+      .then(() => {});
+
+    const channel = supabase
+      .channel(`conv-${listingId}-${user.id}-${otherUserId}`)
+      .on('postgres_changes', {
+        event: 'INSERT', schema: 'public', table: 'messages',
+        filter: `listing_id=eq.${listingId}`,
+      }, (payload) => {
+        const msg = payload.new as Message;
+        if (
+          (msg.sender_id === user.id && msg.receiver_id === otherUserId) ||
+          (msg.sender_id === otherUserId && msg.receiver_id === user.id)
+        ) {
+          setMessages(prev => [...prev, msg]);
+          if (msg.receiver_id === user.id) {
+            supabase.from('messages').update({ is_read: true }).eq('id', msg.id).then(() => {});
+          }
+        }
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [user, listingId, otherUserId]);
+
+  if (!user) return (
+    <div className="page" style={{ display: 'block', textAlign: 'center', padding: '6rem 2rem' }}>
+      <div style={{ marginBottom: '1.5rem', color: 'var(--muted)' }}>Please log in to view messages.</div>
+      <button className="btn-primary" style={{ width: 'auto', padding: '0.75rem 2.5rem' }} onClick={openAuthModal}>Login</button>
+    </div>
+  );
+
+  const handleSend = async () => {
+    if (!inputVal.trim() || !user || !otherUserId || !listingId) return;
+    const content = inputVal.trim();
+    setInputVal('');
+    setSending(true);
+    try {
+      await supabase.from('messages').insert({
+        sender_id: user.id,
+        receiver_id: otherUserId,
+        listing_id: listingId,
+        content,
+        is_read: false,
+      });
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const otherName = otherProfile?.username ? `@${otherProfile.username}` : 'User';
+  const otherInitial = (otherProfile?.first_name ?? otherProfile?.username ?? '?').charAt(0).toUpperCase();
+  const myInitial = (profile?.first_name ?? profile?.username ?? user.email ?? '?').charAt(0).toUpperCase();
+  const myName = profile?.username ? `@${profile.username}` : 'You';
+
+  return (
+    <div className="page" style={{ display: 'block' }}>
+      <div className="conv-layout">
+        <div className="conv-header">
+          <button className="conv-back" onClick={() => navigate('/inbox')}>← Back</button>
+          <div className="conv-header-info">
+            <div className="conv-other-name">{otherName}</div>
+            {listing && (
+              <Link to={`/item/${listing.id}`} className="conv-listing-link">
+                {listing.title}
+              </Link>
+            )}
+          </div>
+          {listing && (
+            <div className="conv-listing-thumb">
+              {listing.photo_urls?.[0]
+                ? <img src={listing.photo_urls[0]} alt={listing.title} />
+                : <span>{listing.emoji || '👗'}</span>
+              }
+            </div>
+          )}
+        </div>
+
+        <div className="conv-messages">
+          {messages.length === 0 && (
+            <div style={{ textAlign: 'center', color: 'var(--muted)', fontSize: '0.85rem', padding: '2rem' }}>
+              No messages yet — say hello!
+            </div>
+          )}
+          {messages.map(msg => {
+            const isMine = msg.sender_id === user.id;
+            return (
+              <div key={msg.id} className={`conv-msg-row ${isMine ? 'mine' : 'theirs'}`}>
+                <div className="conv-avatar">{isMine ? myInitial : otherInitial}</div>
+                <div className="conv-msg-content">
+                  <div className="conv-msg-sender">{isMine ? myName : otherName}</div>
+                  <div className="conv-bubble">{msg.content}</div>
+                  <div className="conv-msg-time">{formatTime(new Date(msg.created_at))}</div>
+                </div>
+              </div>
+            );
+          })}
+          <div ref={messagesEndRef} />
+        </div>
+
+        <div className="conv-input-row">
+          <input
+            className="conv-input"
+            type="text"
+            placeholder="Type a message..."
+            value={inputVal}
+            onChange={e => setInputVal(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && !sending && handleSend()}
+          />
+          <button className="conv-send" onClick={handleSend} disabled={sending}>Send</button>
+        </div>
+      </div>
+    </div>
+  );
+}

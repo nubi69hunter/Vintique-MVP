@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useUI } from '../contexts/UIContext';
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
@@ -9,9 +9,10 @@ export default function ListingDetail() {
   const { id } = useParams<{ id: string }>();
   const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
-  const { openChat, openAuthModal } = useUI();
+  const { openAuthModal } = useUI();
   const [activeThumb, setActiveThumb] = useState(0);
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     supabase.from('listings').select('*').eq('id', id).single().then(({ data, error }) => {
@@ -20,14 +21,10 @@ export default function ListingDetail() {
     });
   }, [id]);
 
-  const handleOpenChat = () => {
+  const handleMessageSeller = () => {
     if (!listing) return;
     if (!user) { openAuthModal(); return; }
-    openChat({
-      listingId: listing.id,
-      sellerId: listing.seller_id || '',
-      sellerName: listing.seller || 'Seller',
-    });
+    navigate(`/inbox/${listing.id}/${listing.seller_id}`);
   };
 
   if (loading) return <div className="page" style={{ display: 'block' }}><div style={{ padding: '4rem', textAlign: 'center' }}>Loading...</div></div>;
@@ -35,6 +32,7 @@ export default function ListingDetail() {
 
   const photos = listing.photo_urls || [];
   const activePhoto = photos[activeThumb];
+  const isOwnListing = user && listing.seller_id === user.id;
 
   return (
     <div className="page" style={{ display: 'block' }}>
@@ -74,7 +72,15 @@ export default function ListingDetail() {
               <div className="seller-name">{listing.seller || 'Seller'}</div>
               <div className="seller-rating">⭐ 4.9 · {listing.city || 'Saudi Arabia'}</div>
             </div>
-            <button className="btn-secondary" style={{ width: 'auto', padding: '0.4rem 1rem', marginLeft: 'auto', fontSize: '0.7rem' }} onClick={handleOpenChat}>Message</button>
+            {!isOwnListing && (
+              <button
+                className="btn-secondary"
+                style={{ width: 'auto', padding: '0.4rem 1rem', marginLeft: 'auto', fontSize: '0.7rem' }}
+                onClick={handleMessageSeller}
+              >
+                Message
+              </button>
+            )}
           </div>
           <div className="detail-title">{listing.title}</div>
           <div className="detail-price">{listing.price} <span>SAR</span></div>
@@ -106,7 +112,15 @@ export default function ListingDetail() {
           <div className="detail-actions">
             <button className="btn-coming-soon" disabled>Buy Now — Coming Soon</button>
             <div className="coming-soon-note">Secure payments coming soon. Message the seller to arrange a meetup.</div>
-            <button className="btn-secondary" onClick={handleOpenChat}>Message Seller</button>
+            {isOwnListing ? (
+              <button className="btn-secondary" onClick={() => navigate(`/inbox?listing=${listing.id}`)}>
+                View Messages
+              </button>
+            ) : (
+              <button className="btn-secondary" onClick={handleMessageSeller}>
+                Message Seller
+              </button>
+            )}
           </div>
         </div>
       </div>
