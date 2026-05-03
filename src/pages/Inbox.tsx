@@ -58,7 +58,7 @@ export default function Inbox() {
         const otherUserId = msg.sender_id === user!.id ? msg.receiver_id : msg.sender_id;
         const key = `${msg.listing_id}::${otherUserId}`;
         if (!convMap.has(key)) {
-          convMap.set(key, { listingId: msg.listing_id, otherUserId, latestMessage: msg, unreadCount: 0 });
+          convMap.set(key, { listingId: String(msg.listing_id), otherUserId, latestMessage: msg, unreadCount: 0 });
         }
         if (msg.receiver_id === user!.id && !msg.is_read) {
           convMap.get(key)!.unreadCount++;
@@ -76,7 +76,8 @@ export default function Inbox() {
 
       setConversations(convList.map(c => ({
         ...c,
-        listing: listings?.find(l => String(l.id) === c.listingId),
+        // Stringify both sides to handle integer vs string ID mismatch
+        listing: listings?.find(l => String(l.id) === String(c.listingId)),
         otherProfile: profiles?.find(p => p.id === c.otherUserId),
       })));
       setLoading(false);
@@ -96,12 +97,10 @@ export default function Inbox() {
     </div>
   );
 
-  // Unique listings for filter pills
   const uniqueListings = Array.from(
     new Map(conversations.map(c => [c.listingId, c.listing])).entries()
   ).map(([id, listing]) => ({ id, title: listing?.title || 'Listing' }));
 
-  // Filter in JSX only
   const visible = listingFilter
     ? conversations.filter(c => c.listingId === listingFilter)
     : conversations;
@@ -153,7 +152,7 @@ export default function Inbox() {
                 >
                   <div className="inbox-row-img" style={{ position: 'relative' }}>
                     {photo
-                      ? <img src={photo} alt="" />
+                      ? <img src={photo} alt={conv.listing?.title} />
                       : <span>{conv.listing?.emoji || '👗'}</span>
                     }
                     <div className="inbox-avatar-overlay">

@@ -32,6 +32,22 @@ function formatTime(date: Date): string {
   return date.toLocaleDateString('en', { month: 'short', day: 'numeric' });
 }
 
+function shouldGroup(prev: Message, curr: Message): boolean {
+  if (prev.sender_id !== curr.sender_id) return false;
+  return new Date(curr.created_at).getTime() - new Date(prev.created_at).getTime() < 60000;
+}
+
+function Avatar({ avatarUrl, initial, hidden }: { avatarUrl: string | null | undefined; initial: string; hidden?: boolean }) {
+  return (
+    <div className="conv-avatar" style={{ visibility: hidden ? 'hidden' : 'visible', overflow: 'hidden' }}>
+      {avatarUrl
+        ? <img src={avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        : initial
+      }
+    </div>
+  );
+}
+
 export default function Conversation() {
   const { listingId, otherUserId } = useParams<{ listingId: string; otherUserId: string }>();
   const { user, profile } = useAuth();
@@ -55,7 +71,7 @@ export default function Conversation() {
     supabase.from('listings').select('*').eq('id', listingId).single()
       .then(({ data }) => { if (data) setListing(data); });
 
-    supabase.from('profiles').select('*').eq('id', otherUserId).single()
+    supabase.from('profiles').select('id, username, first_name, avatar_url').eq('id', otherUserId).single()
       .then(({ data }) => { if (data) setOtherProfile(data); });
 
     supabase.from('messages').select('*')
@@ -194,16 +210,34 @@ export default function Conversation() {
               No messages yet — say hello!
             </div>
           )}
-          {messages.map(msg => {
+          {messages.map((msg, i) => {
             const isMine = msg.sender_id === user.id;
             const isTemp = msg.id.startsWith('temp-');
+            const prevMsg = i > 0 ? messages[i - 1] : null;
+            const nextMsg = i < messages.length - 1 ? messages[i + 1] : null;
+            const grouped = prevMsg ? shouldGroup(prevMsg, msg) : false;
+            const nextGrouped = nextMsg ? shouldGroup(msg, nextMsg) : false;
+            const isLastInGroup = !nextGrouped;
+
             return (
-              <div key={msg.id} className={`conv-msg-row ${isMine ? 'mine' : 'theirs'}`}>
-                <div className="conv-avatar">{isMine ? myInitial : otherInitial}</div>
+              <div
+                key={msg.id}
+                className={`conv-msg-row ${isMine ? 'mine' : 'theirs'}`}
+                style={{ marginBottom: nextGrouped ? '0.15rem' : '1rem' }}
+              >
+                <Avatar
+                  avatarUrl={isMine ? profile?.avatar_url : otherProfile?.avatar_url}
+                  initial={isMine ? myInitial : otherInitial}
+                  hidden={grouped}
+                />
                 <div className="conv-msg-content">
-                  <div className="conv-msg-sender">{isMine ? myName : otherName}</div>
+                  {!grouped && (
+                    <div className="conv-msg-sender">{isMine ? myName : otherName}</div>
+                  )}
                   <div className={`conv-bubble${isTemp ? ' temp' : ''}`}>{msg.content}</div>
-                  <div className="conv-msg-time">{isTemp ? 'Sending…' : formatTime(new Date(msg.created_at))}</div>
+                  {isLastInGroup && (
+                    <div className="conv-msg-time">{isTemp ? 'Sending…' : formatTime(new Date(msg.created_at))}</div>
+                  )}
                 </div>
               </div>
             );
