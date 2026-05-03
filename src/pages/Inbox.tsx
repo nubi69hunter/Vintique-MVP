@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useUI } from '../contexts/UIContext';
 import { supabase } from '../lib/supabase';
@@ -20,7 +20,7 @@ interface Conversation {
   latestMessage: Message;
   unreadCount: number;
   listing?: { id: string | number; title: string; photo_urls?: string[]; emoji?: string };
-  otherProfile?: { username: string; first_name?: string | null };
+  otherProfile?: { username: string; first_name?: string | null; avatar_url?: string | null };
 }
 
 function formatTime(date: Date): string {
@@ -36,11 +36,10 @@ function formatTime(date: Date): string {
 export default function Inbox() {
   const { user, loading: authLoading } = useAuth();
   const { openAuthModal } = useUI();
-  const navigate = useNavigate();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
-  const filterListing = searchParams.get('listing');
+  const [listingFilter, setListingFilter] = useState<string | null>(searchParams.get('listing'));
 
   useEffect(() => {
     if (!user) { setLoading(false); return; }
@@ -66,15 +65,13 @@ export default function Inbox() {
         }
       }
 
-      let convList = Array.from(convMap.values());
-      if (filterListing) convList = convList.filter(c => c.listingId === filterListing);
-
+      const convList = Array.from(convMap.values());
       const listingIds = [...new Set(convList.map(c => c.listingId))];
       const otherIds = [...new Set(convList.map(c => c.otherUserId))];
 
       const [{ data: listings }, { data: profiles }] = await Promise.all([
         supabase.from('listings').select('id, title, photo_urls, emoji').in('id', listingIds),
-        supabase.from('profiles').select('id, username, first_name').in('id', otherIds),
+        supabase.from('profiles').select('id, username, first_name, avatar_url').in('id', otherIds),
       ]);
 
       setConversations(convList.map(c => ({
@@ -86,7 +83,7 @@ export default function Inbox() {
     }
 
     load();
-  }, [user, filterListing]);
+  }, [user]);
 
   if (authLoading || loading) return (
     <div className="page" style={{ display: 'block', textAlign: 'center', padding: '4rem' }}>Loading...</div>
@@ -99,19 +96,44 @@ export default function Inbox() {
     </div>
   );
 
+  // Unique listings for filter pills
+  const uniqueListings = Array.from(
+    new Map(conversations.map(c => [c.listingId, c.listing])).entries()
+  ).map(([id, listing]) => ({ id, title: listing?.title || 'Listing' }));
+
+  // Filter in JSX only
+  const visible = listingFilter
+    ? conversations.filter(c => c.listingId === listingFilter)
+    : conversations;
+
   return (
     <div className="page" style={{ display: 'block' }}>
       <div className="inbox-layout">
         <div className="inbox-header">
           <div className="inbox-title">Inbox</div>
-          {filterListing && (
-            <button className="inbox-clear-filter" onClick={() => navigate('/inbox')}>
-              ← All messages
-            </button>
-          )}
         </div>
 
-        {conversations.length === 0 ? (
+        {uniqueListings.length > 1 && (
+          <div className="inbox-filter-pills">
+            <button
+              className={`inbox-filter-pill${listingFilter === null ? ' active' : ''}`}
+              onClick={() => setListingFilter(null)}
+            >
+              All
+            </button>
+            {uniqueListings.map(({ id, title }) => (
+              <button
+                key={id}
+                className={`inbox-filter-pill${listingFilter === id ? ' active' : ''}`}
+                onClick={() => setListingFilter(id)}
+              >
+                {title}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {visible.length === 0 ? (
           <div className="empty">
             <div className="empty-icon">💬</div>
             <div className="empty-title">No Messages Yet</div>
@@ -119,8 +141,9 @@ export default function Inbox() {
           </div>
         ) : (
           <div className="inbox-list">
-            {conversations.map(conv => {
+            {visible.map(conv => {
               const photo = conv.listing?.photo_urls?.[0];
+              const otherInitial = (conv.otherProfile?.first_name ?? conv.otherProfile?.username ?? '?').charAt(0).toUpperCase();
               const otherName = conv.otherProfile?.username ? `@${conv.otherProfile.username}` : 'User';
               return (
                 <Link
@@ -128,11 +151,17 @@ export default function Inbox() {
                   to={`/inbox/${conv.listingId}/${conv.otherUserId}`}
                   className={`inbox-row${conv.unreadCount > 0 ? ' unread' : ''}`}
                 >
-                  <div className="inbox-row-img">
+                  <div className="inbox-row-img" style={{ position: 'relative' }}>
                     {photo
                       ? <img src={photo} alt="" />
                       : <span>{conv.listing?.emoji || '👗'}</span>
                     }
+                    <div className="inbox-avatar-overlay">
+                      {conv.otherProfile?.avatar_url
+                        ? <img src={conv.otherProfile.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                        : <span>{otherInitial}</span>
+                      }
+                    </div>
                   </div>
                   <div className="inbox-row-body">
                     <div className="inbox-row-top">

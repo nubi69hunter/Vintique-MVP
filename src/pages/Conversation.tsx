@@ -64,11 +64,10 @@ export default function Conversation() {
       .order('created_at', { ascending: true })
       .then(({ data }) => {
         if (data) {
-          const filtered = data.filter(m =>
+          setMessages(data.filter(m =>
             (m.sender_id === user.id && m.receiver_id === otherUserId) ||
             (m.sender_id === otherUserId && m.receiver_id === user.id)
-          );
-          setMessages(filtered);
+          ));
         }
       });
 
@@ -87,13 +86,29 @@ export default function Conversation() {
       }, (payload) => {
         const msg = payload.new as Message;
         if (
-          (msg.sender_id === user.id && msg.receiver_id === otherUserId) ||
-          (msg.sender_id === otherUserId && msg.receiver_id === user.id)
-        ) {
-          setMessages(prev => [...prev, msg]);
-          if (msg.receiver_id === user.id) {
-            supabase.from('messages').update({ is_read: true }).eq('id', msg.id).then(() => {});
+          !(
+            (msg.sender_id === user.id && msg.receiver_id === otherUserId) ||
+            (msg.sender_id === otherUserId && msg.receiver_id === user.id)
+          )
+        ) return;
+
+        setMessages(prev => {
+          if (prev.some(m => m.id === msg.id)) return prev;
+          const tempIdx = prev.findIndex(m =>
+            m.id.startsWith('temp-') &&
+            m.sender_id === msg.sender_id &&
+            m.content === msg.content
+          );
+          if (tempIdx !== -1) {
+            const next = [...prev];
+            next[tempIdx] = msg;
+            return next;
           }
+          return [...prev, msg];
+        });
+
+        if (msg.receiver_id === user.id) {
+          supabase.from('messages').update({ is_read: true }).eq('id', msg.id).then(() => {});
         }
       })
       .subscribe();
@@ -111,16 +126,35 @@ export default function Conversation() {
   const handleSend = async () => {
     if (!inputVal.trim() || !user || !otherUserId || !listingId) return;
     const content = inputVal.trim();
+    const tempId = `temp-${Date.now()}`;
     setInputVal('');
     setSending(true);
+
+    const tempMsg: Message = {
+      id: tempId,
+      sender_id: user.id,
+      receiver_id: otherUserId,
+      listing_id: listingId,
+      content,
+      created_at: new Date().toISOString(),
+      is_read: false,
+    };
+    setMessages(prev => [...prev, tempMsg]);
+
     try {
-      await supabase.from('messages').insert({
-        sender_id: user.id,
-        receiver_id: otherUserId,
-        listing_id: listingId,
-        content,
-        is_read: false,
-      });
+      const { data, error } = await supabase
+        .from('messages')
+        .insert({ sender_id: user.id, receiver_id: otherUserId, listing_id: listingId, content, is_read: false })
+        .select()
+        .single();
+
+      if (error || !data) {
+        setMessages(prev => prev.filter(m => m.id !== tempId));
+      } else {
+        setMessages(prev => prev.map(m => m.id === tempId ? data : m));
+      }
+    } catch {
+      setMessages(prev => prev.filter(m => m.id !== tempId));
     } finally {
       setSending(false);
     }
@@ -162,13 +196,14 @@ export default function Conversation() {
           )}
           {messages.map(msg => {
             const isMine = msg.sender_id === user.id;
+            const isTemp = msg.id.startsWith('temp-');
             return (
               <div key={msg.id} className={`conv-msg-row ${isMine ? 'mine' : 'theirs'}`}>
                 <div className="conv-avatar">{isMine ? myInitial : otherInitial}</div>
                 <div className="conv-msg-content">
                   <div className="conv-msg-sender">{isMine ? myName : otherName}</div>
-                  <div className="conv-bubble">{msg.content}</div>
-                  <div className="conv-msg-time">{formatTime(new Date(msg.created_at))}</div>
+                  <div className={`conv-bubble${isTemp ? ' temp' : ''}`}>{msg.content}</div>
+                  <div className="conv-msg-time">{isTemp ? 'Sending…' : formatTime(new Date(msg.created_at))}</div>
                 </div>
               </div>
             );
