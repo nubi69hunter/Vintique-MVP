@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useUI } from '../contexts/UIContext';
 import { supabase } from '../lib/supabase';
@@ -9,6 +9,10 @@ export default function Navbar() {
   const { openAuthModal } = useUI();
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const isHome = location.pathname === '/';
+  const activeGender = searchParams.get('gender') || 'all';
 
   const displayName = profile?.username
     ? `@${profile.username}`
@@ -132,6 +136,14 @@ export default function Navbar() {
         <div className="mobile-search-bar">
           <input type="text" placeholder="Search items, brands, sellers..." autoFocus />
           <button onClick={() => setMobileSearchOpen(false)}>✕</button>
+        </div>
+      )}
+
+      {isHome && (
+        <div className="nav-gender-bar">
+          <Link to="/" className={`nav-gender-tab${activeGender === 'all' ? ' active' : ''}`}>All</Link>
+          <Link to="/?gender=women" className={`nav-gender-tab${activeGender === 'women' ? ' active' : ''}`}>Women</Link>
+          <Link to="/?gender=men" className={`nav-gender-tab${activeGender === 'men' ? ' active' : ''}`}>Men</Link>
         </div>
       )}
     </>

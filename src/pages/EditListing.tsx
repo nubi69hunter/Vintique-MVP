@@ -24,6 +24,7 @@ export default function EditListing() {
   const [size, setSize] = useState('M');
   const [brand, setBrand] = useState('');
   const [condition, setCondition] = useState('Good');
+  const [gender, setGender] = useState('women');
   const [price, setPrice] = useState('');
   const [city, setCity] = useState('Riyadh');
 
@@ -42,6 +43,7 @@ export default function EditListing() {
         setPrice(String(data.price || ''));
         setCity(data.city || 'Riyadh');
         setExistingPhotos(data.photo_urls || []);
+        setGender(data.gender || 'women');
       }
       setFetching(false);
     });
@@ -100,6 +102,7 @@ export default function EditListing() {
         size,
         brand,
         condition,
+        gender,
         city,
         photo_urls: allPhotoUrls.length > 0 ? allPhotoUrls : null,
       }).eq('id', id);
@@ -179,6 +182,21 @@ export default function EditListing() {
               <div className="form-group">
                 <label className="form-label">Description</label>
                 <textarea className="form-textarea" placeholder="Describe the item — condition, fit, any flaws, measurements..." value={description} onChange={e => setDescription(e.target.value)}></textarea>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Gender *</label>
+                <div className="gender-toggle">
+                  {(['women', 'men', 'unisex'] as const).map(g => (
+                    <button
+                      key={g}
+                      type="button"
+                      className={`gender-toggle-btn${gender === g ? ' active' : ''}`}
+                      onClick={() => setGender(g)}
+                    >
+                      {g.charAt(0).toUpperCase() + g.slice(1)}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div className="form-row">
                 <div className="form-group">

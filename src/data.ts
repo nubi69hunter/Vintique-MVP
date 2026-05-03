@@ -14,6 +14,7 @@ export interface Listing {
   photo_urls?: string[];
   created_at?: string;
   status?: string;
+  gender?: string;
 }
 
 export const LISTINGS: Listing[] = [

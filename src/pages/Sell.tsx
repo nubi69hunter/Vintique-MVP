@@ -16,6 +16,7 @@ export default function Sell() {
   const [size, setSize] = useState('M');
   const [brand, setBrand] = useState('');
   const [condition, setCondition] = useState('Good');
+  const [gender, setGender] = useState('women');
   const [price, setPrice] = useState('');
   const [city, setCity] = useState('Riyadh');
   const [loading, setLoading] = useState(false);
@@ -60,8 +61,8 @@ export default function Sell() {
       return;
     }
 
-    if (!title || !price) {
-      showToast('Please fill in title and price.');
+    if (!title || !price || !gender) {
+      showToast('Please fill in title, gender, and price.');
       return;
     }
 
@@ -82,6 +83,7 @@ export default function Sell() {
           size,
           brand,
           condition,
+          gender,
           city,
           seller_id: user.id,
           seller: sellerName,
@@ -151,6 +153,21 @@ export default function Sell() {
               <div className="form-group">
                 <label className="form-label">Description</label>
                 <textarea className="form-textarea" placeholder="Describe the item — condition, fit, any flaws, measurements..." value={description} onChange={e => setDescription(e.target.value)}></textarea>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Gender *</label>
+                <div className="gender-toggle">
+                  {(['women', 'men', 'unisex'] as const).map(g => (
+                    <button
+                      key={g}
+                      type="button"
+                      className={`gender-toggle-btn${gender === g ? ' active' : ''}`}
+                      onClick={() => setGender(g)}
+                    >
+                      {g.charAt(0).toUpperCase() + g.slice(1)}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div className="form-row">
                 <div className="form-group">

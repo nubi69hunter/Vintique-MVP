@@ -347,3 +347,27 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; 
 .modal-radio-row { display: flex; align-items: center; gap: 0.65rem; font-size: 0.88rem; color: var(--black); cursor: pointer; padding: 0.35rem 0; }
 .modal-radio-row input[type="radio"] { flex-shrink: 0; width: 16px; height: 16px; cursor: pointer; }
 .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
+
+/* GENDER TAB BAR — fixed below main nav, home page only */
+.nav-gender-bar { position: fixed; top: 70px; left: 0; right: 0; z-index: 998; background: rgba(245,240,232,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: center; height: 44px; }
+.nav-gender-tab { padding: 0 2.5rem; height: 100%; display: flex; align-items: center; font-size: 0.73rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; }
+.nav-gender-tab:hover { color: var(--black); }
+.nav-gender-tab.active { color: var(--black); border-bottom-color: var(--rust); }
+
+/* Home page needs extra top padding for gender bar */
+.home-page { padding-top: 114px !important; }
+
+/* Filter checkbox active state */
+.filter-item input[type="checkbox"]:checked { accent-color: var(--rust); }
+
+/* Gender toggle in sell/edit form */
+.gender-toggle { display: flex; gap: 0; border: 1px solid var(--border); overflow: hidden; }
+.gender-toggle-btn { flex: 1; padding: 0.65rem 0; background: #fff; border: none; border-right: 1px solid var(--border); font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); cursor: pointer; transition: background 0.15s, color 0.15s; }
+.gender-toggle-btn:last-child { border-right: none; }
+.gender-toggle-btn.active { background: var(--black); color: var(--cream); }
+.gender-toggle-btn:hover:not(.active) { background: var(--border); color: var(--black); }
+
+@media(max-width: 768px) {
+  .nav-gender-bar { top: 52px; }
+  .home-page { padding-top: 96px !important; }
+}
