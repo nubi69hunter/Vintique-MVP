@@ -10,7 +10,7 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchListings() {
-      const { data, error } = await supabase.from('listings').select('*').order('id', { ascending: false });
+      const { data, error } = await supabase.from('listings').select('*').or('status.eq.active,status.is.null').order('id', { ascending: false });
       if (!error && data) {
         setListings(data);
       }

@@ -9,6 +9,7 @@ import Profile from './pages/Profile';
 import Onboarding from './pages/Onboarding';
 import Inbox from './pages/Inbox';
 import Conversation from './pages/Conversation';
+import EditListing from './pages/EditListing';
 import Toast from './components/Toast';
 import AuthModal from './components/AuthModal';
 import { UIProvider } from './contexts/UIContext';
@@ -45,6 +46,7 @@ export default function App() {
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/inbox" element={<Inbox />} />
             <Route path="/inbox/:listingId/:otherUserId" element={<Conversation />} />
+            <Route path="/edit-listing/:id" element={<EditListing />} />
           </Routes>
           <AuthModal />
           <Toast />

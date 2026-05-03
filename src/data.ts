@@ -13,6 +13,7 @@ export interface Listing {
   city?: string;
   photo_urls?: string[];
   created_at?: string;
+  status?: string;
 }
 
 export const LISTINGS: Listing[] = [

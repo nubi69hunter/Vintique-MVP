@@ -5,6 +5,13 @@ import { supabase } from '../lib/supabase';
 import { Listing } from '../data';
 import { useAuth } from '../contexts/AuthContext';
 
+const SOLD_OPTIONS = [
+  'Sold on Vintique',
+  'Sold outside Vintique',
+  'No longer available',
+  'Cancelled — no buyers',
+] as const;
+
 export default function ListingDetail() {
   const { id } = useParams<{ id: string }>();
   const [listing, setListing] = useState<Listing | null>(null);
@@ -13,6 +20,10 @@ export default function ListingDetail() {
   const [activeThumb, setActiveThumb] = useState(0);
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  const [soldModalOpen, setSoldModalOpen] = useState(false);
+  const [soldOption, setSoldOption] = useState<string>('Sold on Vintique');
+  const [statusLoading, setStatusLoading] = useState(false);
 
   useEffect(() => {
     supabase.from('listings').select('*').eq('id', id).single().then(({ data, error }) => {
@@ -25,6 +36,19 @@ export default function ListingDetail() {
     if (!listing) return;
     if (!user) { openAuthModal(); return; }
     navigate(`/inbox/${listing.id}/${listing.seller_id}`);
+  };
+
+  const handleMarkSold = async () => {
+    if (!listing) return;
+    const newStatus = soldOption === 'Sold on Vintique' || soldOption === 'Sold outside Vintique'
+      ? 'sold'
+      : 'removed';
+    setStatusLoading(true);
+    const { error } = await supabase.from('listings').update({ status: newStatus }).eq('id', listing.id);
+    setStatusLoading(false);
+    if (!error) {
+      navigate('/profile');
+    }
   };
 
   if (loading) return <div className="page" style={{ display: 'block' }}><div style={{ padding: '4rem', textAlign: 'center' }}>Loading...</div></div>;
@@ -113,14 +137,51 @@ export default function ListingDetail() {
             <button className="btn-coming-soon" disabled>Buy Now — Coming Soon</button>
             <div className="coming-soon-note">Secure payments coming soon. Message the seller to arrange a meetup.</div>
             {isOwnListing ? (
-              <button className="btn-secondary" onClick={() => navigate(`/inbox?listing=${listing.id}`)}>
-                View Messages
-              </button>
+              <>
+                <button className="btn-secondary" onClick={() => navigate(`/inbox?listing=${listing.id}`)}>
+                  View Messages
+                </button>
+                <button
+                  className="btn-secondary"
+                  style={{ color: 'var(--rust)' }}
+                  onClick={() => setSoldModalOpen(true)}
+                >
+                  Mark as Sold / Remove
+                </button>
+              </>
             ) : (
               <button className="btn-secondary" onClick={handleMessageSeller}>
                 Message Seller
               </button>
             )}
+          </div>
+        </div>
+      </div>
+
+      {/* Mark as Sold / Remove modal */}
+      <div className={`modal-overlay${soldModalOpen ? ' open' : ''}`} onClick={() => setSoldModalOpen(false)}>
+        <div className="modal" onClick={e => e.stopPropagation()}>
+          <div className="modal-title">What would you like to do?</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', margin: '1.25rem 0 1.75rem' }}>
+            {SOLD_OPTIONS.map(opt => (
+              <label key={opt} className="modal-radio-row">
+                <input
+                  type="radio"
+                  name="sold-option"
+                  value={opt}
+                  checked={soldOption === opt}
+                  onChange={() => setSoldOption(opt)}
+                  style={{ accentColor: 'var(--rust)' }}
+                />
+                {opt}
+              </label>
+            ))}
+          </div>
+          <div className="modal-actions">
+            <button className="btn-secondary" style={{ width: 'auto' }} onClick={() => setSoldModalOpen(false)}>Cancel</button>
+            <button className="btn-primary" style={{ width: 'auto' }} onClick={handleMarkSold} disabled={statusLoading}>
+              {statusLoading ? 'Updating...' : 'Confirm'}
+            </button>
           </div>
         </div>
       </div>
