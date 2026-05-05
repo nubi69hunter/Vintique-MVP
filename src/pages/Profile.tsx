@@ -9,7 +9,7 @@ import ListingCard from '../components/ListingCard';
 export default function Profile() {
   const [activeTab, setActiveTab] = useState('Active Listings');
   const navigate = useNavigate();
-  const { user, profile, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading, signOut } = useAuth();
   const { openAuthModal } = useUI();
   const [listings, setListings] = useState<Listing[]>([]);
   const [listingsLoading, setListingsLoading] = useState(false);
@@ -188,6 +188,9 @@ export default function Profile() {
           ))}
         </div>
         {renderTabContent()}
+        <div className="profile-signout">
+          <button className="profile-signout-btn" onClick={signOut}>Sign Out</button>
+        </div>
       </div>
     </div>
   );

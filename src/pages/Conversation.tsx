@@ -187,7 +187,7 @@ export default function Conversation() {
         <div className="conv-header">
           <button className="conv-back" onClick={() => navigate('/inbox')}>← Back</button>
           <div className="conv-header-info">
-            <div className="conv-other-name">{otherName}</div>
+            <Link to={`/seller/${otherUserId}`} className="conv-other-name">{otherName}</Link>
             {listing && (
               <Link to={`/item/${listing.id}`} className="conv-listing-link">
                 {listing.title}
@@ -232,7 +232,12 @@ export default function Conversation() {
                 />
                 <div className="conv-msg-content">
                   {!grouped && (
-                    <div className="conv-msg-sender">{isMine ? myName : otherName}</div>
+                    <Link
+                      to={isMine ? '/profile' : `/seller/${otherUserId}`}
+                      className="conv-msg-sender"
+                    >
+                      {isMine ? myName : otherName}
+                    </Link>
                   )}
                   <div className={`conv-bubble${isTemp ? ' temp' : ''}`}>{msg.content}</div>
                   {isLastInGroup && (

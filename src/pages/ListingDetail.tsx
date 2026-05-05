@@ -1,9 +1,10 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useUI } from '../contexts/UIContext';
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { Listing } from '../data';
 import { useAuth } from '../contexts/AuthContext';
+import Price from '../components/Price';
 
 const SOLD_OPTIONS = [
   'Sold on Vintique',
@@ -91,11 +92,16 @@ export default function ListingDetail() {
         </div>
         <div className="detail-info">
           <div className="detail-seller">
-            <div className="seller-avatar">{listing.seller?.charAt(1)?.toUpperCase() || 'S'}</div>
-            <div>
-              <div className="seller-name">{listing.seller || 'Seller'}</div>
-              <div className="seller-rating">⭐ 4.9 · {listing.city || 'Saudi Arabia'}</div>
-            </div>
+            <Link
+              to={listing.seller_id ? `/seller/${listing.seller_id}` : '#'}
+              className="detail-seller-link"
+            >
+              <div className="seller-avatar">{listing.seller?.charAt(1)?.toUpperCase() || 'S'}</div>
+              <div>
+                <div className="seller-name">{listing.seller || 'Seller'}</div>
+                <div className="seller-rating">⭐ 4.9 · {listing.city || 'Saudi Arabia'}</div>
+              </div>
+            </Link>
             {!isOwnListing && (
               <button
                 className="btn-secondary"
@@ -107,7 +113,9 @@ export default function ListingDetail() {
             )}
           </div>
           <div className="detail-title">{listing.title}</div>
-          <div className="detail-price">{listing.price} <span>SAR</span></div>
+          <div className="detail-price">
+            <Price value={listing.price} />
+          </div>
           <div className="detail-badges">
             <div className="badge condition">{listing.condition}</div>
             <div className="badge">Size {listing.size}</div>

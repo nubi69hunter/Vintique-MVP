@@ -1,11 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Listing } from '../data';
+import Price from './Price';
 
 export default function ListingCard({ listing }: { listing: Listing; key?: React.Key }) {
   const photo = listing.photo_urls?.[0];
   return (
-    <Link to={`/item/${listing.id}`} className="listing-card">
+    <div className="listing-card">
+      {/* Full-card overlay — navigates to listing detail */}
+      <Link to={`/item/${listing.id}`} className="listing-card-overlay" aria-label={listing.title} />
       <div className="card-img">
         {photo ? (
           <img src={photo} alt={listing.title} />
@@ -16,9 +19,12 @@ export default function ListingCard({ listing }: { listing: Listing; key?: React
       </div>
       <div className="card-info">
         <div className="card-title">{listing.title}</div>
-        <div className="card-price">{listing.price} <span>SAR</span></div>
-        <div className="card-seller">{listing.seller}</div>
+        <div className="card-meta">{listing.brand}</div>
+        <Price value={listing.price} className="card-price" />
+        <Link to={`/seller/${listing.seller_id}`} className="card-seller">
+          {listing.seller}
+        </Link>
       </div>
-    </Link>
+    </div>
   );
 }
