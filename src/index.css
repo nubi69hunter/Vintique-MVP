@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  /* existing palette — keeps other pages intact */
   --cream: #F5F0E8;
   --black: #141210;
   --warm: #1C1814;
@@ -9,7 +10,31 @@
   --muted: #7A7268;
   --border: #E8E2D8;
   --card: #FDFAF5;
+
+  /* landing / design-system tokens */
+  --lp-bg:         #ede5d8;
+  --lp-bg-r:       #e5ddd0;   /* hero right panel */
+  --lp-text:       #1a1814;
+  --lp-accent:     #c4622d;   /* burnt sienna */
+  --lp-muted:      rgba(26,24,20,0.52);
+  --lp-border:     rgba(26,24,20,0.10);
+  --lp-card-bg:    #f2ead9;
+  --lp-dark-sec:   #1a1814;   /* how-it-works bg */
+  --lp-transition: 300ms ease;
 }
+
+/* ── DARK MODE ── */
+html.dark {
+  --lp-bg:      #1a1814;
+  --lp-bg-r:    #211c18;
+  --lp-text:    #ede5d8;
+  --lp-muted:   rgba(237,229,216,0.52);
+  --lp-border:  rgba(237,229,216,0.10);
+  --lp-card-bg: #241e1a;
+  --lp-dark-sec:#111009;
+}
+
+html.dark body { background: #1a1814; color: #ede5d8; }
 
 html { scroll-behavior: smooth; }
 body { background: var(--cream); color: var(--black); font-family: 'DM Sans', sans-serif; font-weight: 300; overflow-x: hidden; }
@@ -27,6 +52,32 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; 
 .nav-link:hover { color: var(--black); }
 .btn-sell { background: var(--rust); color: #fff; padding: 0.5rem 1.3rem; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; border: none; cursor: pointer; transition: background 0.2s; text-decoration: none; }
 .btn-sell:hover { background: var(--black); }
+
+/* nav scroll shadow */
+nav { transition: box-shadow var(--lp-transition), background var(--lp-transition); }
+nav.nav-scrolled { box-shadow: 0 4px 28px rgba(26,24,20,0.10); }
+
+/* dark mode nav */
+html.dark nav { background: rgba(26,24,20,0.97); border-bottom-color: rgba(237,229,216,0.08); }
+html.dark .nav-logo { color: #ede5d8; }
+html.dark .nav-logo span { color: var(--lp-accent); }
+html.dark .nav-link { color: rgba(237,229,216,0.55); }
+html.dark .nav-link:hover { color: #ede5d8; }
+html.dark .nav-icon-btn { color: #ede5d8; }
+html.dark .nav-icon-sell { background: var(--lp-accent) !important; }
+html.dark .btn-sell { background: var(--lp-accent); }
+html.dark .mobile-search-bar { background: rgba(26,24,20,0.98); border-bottom-color: rgba(237,229,216,0.08); }
+html.dark .mobile-search-bar input { color: #ede5d8; border-color: rgba(237,229,216,0.15); }
+
+/* dark mode toggle button */
+.nav-dark-btn { opacity: 0.6; }
+.nav-dark-btn:hover { opacity: 1; color: var(--lp-accent); }
+
+/* desktop: show text nav, hide icon row */
+@media(min-width: 769px) {
+  .nav-right { display: flex; align-items: center; gap: 1.8rem; }
+  .nav-mobile-right { display: none; }
+}
 
 /* PAGE SYSTEM */
 .page { padding-top: 70px; min-height: 100vh; }
@@ -393,123 +444,286 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; 
 }
 
 /* ===================================================================
-   HOME PAGE (Landing)
+   HOME PAGE (Landing) — v3 split-hero redesign
    =================================================================== */
 
 .lh-page { overflow-x: hidden; }
 
-/* — HERO — */
+/* ── HERO ── */
 .lh-hero {
-  background: var(--cream);
-  padding: 7rem 2rem 6rem;
-  text-align: center;
-  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100svh;
+  padding-top: 70px;
+  background: var(--lp-bg);
+  transition: background var(--lp-transition);
 }
 
+/* Left panel */
+.lh-hero-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem 3.5rem 4rem 6rem;
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.lh-hero-left.lh-in { opacity: 1; transform: translateY(0); }
+
 .lh-eyebrow {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 400;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 1.5rem;
+  color: var(--lp-muted);
+  margin-bottom: 1.6rem;
+  transition: color var(--lp-transition);
 }
 
 .lh-headline {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(4.5rem, 8vw, 9rem);
-  line-height: 0.92;
+  font-size: clamp(4.5rem, 6vw, 8rem);
+  line-height: 0.91;
   letter-spacing: 0.02em;
-  color: var(--black);
-  margin-bottom: 2.5rem;
+  color: var(--lp-text);
+  margin-bottom: 2rem;
+  transition: color var(--lp-transition);
 }
 
-.lh-ctas {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
+/* "Yours." — burnt sienna italic serif */
+.lh-accent {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  color: var(--lp-accent);
 }
+
+.lh-subhead {
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--lp-muted);
+  margin-bottom: 3rem;
+  max-width: 380px;
+  transition: color var(--lp-transition);
+}
+
+.lh-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
 
 .lh-btn-primary {
   display: inline-block;
   padding: 0.9rem 2.4rem;
-  background: var(--black);
-  color: var(--cream);
+  background: var(--lp-text);
+  color: var(--lp-bg);
   font-family: 'DM Sans', sans-serif;
   font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   text-decoration: none;
-  transition: background 0.2s;
+  transition: background var(--lp-transition), color var(--lp-transition), transform 0.2s, box-shadow 0.2s;
 }
-.lh-btn-primary:hover { background: var(--rust); }
+.lh-btn-primary:hover { background: var(--lp-accent); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(196,98,45,0.25); }
 
 .lh-btn-secondary {
   display: inline-block;
   padding: 0.9rem 2.4rem;
   background: transparent;
-  color: var(--black);
-  border: 1.5px solid var(--black);
+  color: var(--lp-text);
+  border: 1.5px solid var(--lp-text);
   font-family: 'DM Sans', sans-serif;
   font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   text-decoration: none;
-  transition: background 0.2s, color 0.2s;
+  transition: background var(--lp-transition), color var(--lp-transition), border-color var(--lp-transition), transform 0.2s, box-shadow 0.2s;
 }
-.lh-btn-secondary:hover { background: var(--black); color: var(--cream); }
+.lh-btn-secondary:hover { background: var(--lp-text); color: var(--lp-bg); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(26,24,20,0.18); }
 
-/* — JUST DROPPED — */
+/* Right panel — listing card grid */
+.lh-hero-right {
+  background: var(--lp-bg-r);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 5rem 4rem 3.5rem;
+  overflow: hidden;
+  transition: background var(--lp-transition);
+}
+
+.lh-hgrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+  width: 100%;
+  max-width: 360px;
+}
+
+/* Stagger alternate column down for visual rhythm */
+.lh-hcard:nth-child(even) { margin-top: 1.6rem; }
+
+.lh-hcard {
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  opacity: 0;
+  transform: rotate(var(--rot)) translateY(16px);
+  /* entrance transitions */
+  transition:
+    opacity 0.5s ease var(--delay, 0ms),
+    transform 0.5s ease var(--delay, 0ms),
+    box-shadow 0.3s ease,
+    z-index 0s;
+}
+.lh-hcard.lh-hcard-in {
+  opacity: 1;
+  transform: rotate(var(--rot)) translateY(0);
+}
+/* hover: override delays instantly, straighten + lift */
+.lh-hcard:hover {
+  transform: rotate(0deg) translateY(-5px) !important;
+  box-shadow: 0 20px 48px rgba(26,24,20,0.22);
+  z-index: 2;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.lh-hcard-link { display: block; text-decoration: none; }
+
+.lh-hcard-img {
+  width: 100%;
+  aspect-ratio: 3/4;
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--lp-card-bg);
+  transition: background var(--lp-transition);
+}
+.lh-hcard-img img { width: 100%; height: 100%; object-fit: cover; }
+
+.lh-hcard-emoji {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+}
+
+.lh-hcard-foot {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5rem 0.65rem 0.65rem;
+  background: linear-gradient(transparent, rgba(26,24,20,0.75));
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.3rem;
+}
+.lh-hcard-price {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.95rem;
+  color: #fff;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.lh-hcard-cond {
+  font-size: 0.54rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  background: rgba(237,229,216,0.18);
+  color: rgba(237,229,216,0.9);
+  border-radius: 2px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.lh-hcard-skeleton {
+  width: 100%;
+  aspect-ratio: 3/4;
+  border-radius: 6px;
+  background: var(--lp-card-bg);
+  animation: lh-pulse 1.8s ease-in-out infinite;
+  transition: background var(--lp-transition);
+}
+@keyframes lh-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+/* ── JUST DROPPED ── */
 .lh-section {
-  padding: 5rem 2.5rem;
-  background: var(--cream);
+  padding: 6rem 2.5rem;
+  background: var(--lp-bg);
+  transition: background var(--lp-transition);
+  /* scroll reveal base */
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.65s ease, transform 0.65s ease, background var(--lp-transition);
 }
+.lh-section.lh-in { opacity: 1; transform: translateY(0); }
 
-.lh-section-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-}
+.lh-section-inner { max-width: 1240px; margin: 0 auto; }
 
 .lh-section-head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 2rem;
+  margin-bottom: 2.2rem;
 }
 
 .lh-section-title {
   font-family: 'Bebas Neue', sans-serif;
   font-size: clamp(2rem, 3.5vw, 3rem);
   letter-spacing: 0.02em;
-  color: var(--black);
+  color: var(--lp-text);
+  transition: color var(--lp-transition);
 }
 
 .lh-view-all {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 500;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--lp-muted);
   text-decoration: none;
-  transition: color 0.2s;
+  transition: color var(--lp-transition);
 }
-.lh-view-all:hover { color: var(--rust); }
+.lh-view-all:hover { color: var(--lp-accent); }
 
-/* 4-column grid — reuses existing .listing-card styles */
+/* 4-col grid, reuses .listing-card styles */
 .lh-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.2rem;
 }
 
-/* — HOW IT WORKS — */
-.lh-how {
-  background: var(--warm);
-  padding: 6rem 2.5rem;
+/* staggered scroll reveal per card */
+.lh-grid-card {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
 }
+.lh-section.lh-in .lh-grid-card { opacity: 1; transform: translateY(0); }
+
+/* card hover lift — applies inside landing grid */
+.lh-grid .listing-card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(26,24,20,0.12); }
+
+/* ── HOW IT WORKS ── */
+.lh-how {
+  background: var(--lp-dark-sec);
+  padding: 6.5rem 2.5rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.65s ease, transform 0.65s ease, background var(--lp-transition);
+}
+.lh-how.lh-in { opacity: 1; transform: translateY(0); }
 
 .lh-how-inner {
   max-width: 1000px;
@@ -521,18 +735,26 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; 
 
 .lh-step-num {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 4rem;
-  color: var(--rust);
+  font-size: 4.5rem;
+  color: var(--lp-accent);
   line-height: 1;
   margin-bottom: 1rem;
   letter-spacing: 0.02em;
 }
 
+.lh-step-icon {
+  width: 40px;
+  height: 40px;
+  color: rgba(237,229,216,0.45);
+  margin-bottom: 1.2rem;
+}
+.lh-step-icon svg { width: 100%; height: 100%; }
+
 .lh-step-title {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.5rem;
+  font-size: 1.55rem;
   letter-spacing: 0.02em;
-  color: var(--cream);
+  color: #ede5d8;
   margin-bottom: 0.75rem;
 }
 
@@ -540,7 +762,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; 
   font-size: 0.88rem;
   font-weight: 300;
   line-height: 1.75;
-  color: rgba(245,240,232,0.55);
+  color: rgba(237,229,216,0.5);
   margin: 0;
 }
 
@@ -609,8 +831,27 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; 
 
 /* — RESPONSIVE — */
 @media(max-width: 768px) {
-  .lh-hero { padding: 4rem 1.5rem 3.5rem; }
-  .lh-headline { font-size: clamp(3.5rem, 18vw, 6rem); }
+  /* Hero: stack vertically, 52px mobile nav */
+  .lh-hero {
+    grid-template-columns: 1fr;
+    min-height: unset;
+    padding-top: 52px;
+  }
+  .lh-hero-left {
+    padding: 3rem 1.5rem 2rem;
+    align-items: center;
+    text-align: center;
+  }
+  .lh-headline { font-size: clamp(3.2rem, 16vw, 5.5rem); }
+  .lh-subhead { max-width: 100%; }
+  .lh-ctas { justify-content: center; }
+
+  .lh-hero-right {
+    padding: 2rem 1.5rem 3rem;
+  }
+  .lh-hgrid { max-width: 100%; }
+  .lh-hcard:nth-child(even) { margin-top: 0.8rem; }
+
   .lh-section { padding: 3rem 1.2rem; }
 
   /* 2-column grid on mobile, reset row layout from market page */
