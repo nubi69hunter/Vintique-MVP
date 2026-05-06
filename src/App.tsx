@@ -1,7 +1,8 @@
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
+import Landing from './pages/Landing';
 import ListingDetail from './pages/ListingDetail';
 import Auth from './pages/Auth';
 import Sell from './pages/Sell';
@@ -31,6 +32,13 @@ function OnboardingGuard() {
   return null;
 }
 
+function RootRoute() {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  if (user) return <Navigate to="/market" replace />;
+  return <Landing />;
+}
+
 export default function App() {
   return (
     <AuthProvider>
@@ -39,7 +47,8 @@ export default function App() {
           <OnboardingGuard />
           <Navbar />
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<RootRoute />} />
+            <Route path="/market" element={<Home />} />
             <Route path="/item/:id" element={<ListingDetail />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/sell" element={<Sell />} />

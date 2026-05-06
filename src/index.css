@@ -391,3 +391,467 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; 
   /* Mobile card: adjust border-radius for row layout */
   .card-img { border-radius: 8px; }
 }
+
+/* ===================================================================
+   LANDING PAGE
+   =================================================================== */
+
+.landing { overflow-x: hidden; }
+
+/* — HERO — */
+.landing-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: calc(100vh - 70px);
+  margin-top: 70px;
+}
+
+.landing-hero-left {
+  background: var(--cream);
+  display: flex;
+  align-items: center;
+  padding: 5rem 5rem 5rem 6rem;
+}
+
+.landing-hero-right {
+  background: var(--warm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  overflow: hidden;
+}
+
+.landing-hero-content {
+  max-width: 480px;
+  animation: lhc-fade 0.9s ease both;
+}
+
+@keyframes lhc-fade {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.landing-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1.6rem;
+}
+
+.landing-headline {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(4.2rem, 6vw, 7.5rem);
+  line-height: 0.93;
+  letter-spacing: 0.02em;
+  color: var(--black);
+  margin-bottom: 1.8rem;
+}
+
+.landing-accent {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  color: var(--rust);
+  display: block;
+  font-size: clamp(3.8rem, 5.6vw, 7rem);
+}
+
+.landing-subhead {
+  font-size: 1.05rem;
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--muted);
+  margin-bottom: 2.8rem;
+  max-width: 380px;
+}
+
+.landing-ctas {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.landing-btn-primary {
+  display: inline-block;
+  padding: 0.95rem 2.4rem;
+  background: var(--black);
+  color: var(--cream);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.landing-btn-primary:hover { background: var(--rust); }
+
+.landing-btn-secondary {
+  display: inline-block;
+  padding: 0.95rem 2.4rem;
+  background: transparent;
+  color: var(--black);
+  border: 1.5px solid var(--black);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+.landing-btn-secondary:hover { background: var(--black); color: var(--cream); }
+
+/* Hero listing grid (dark right panel) */
+.landing-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.landing-hero-card {
+  display: block;
+  text-decoration: none;
+  border-radius: 8px;
+  overflow: hidden;
+  animation: card-float 5s ease-in-out infinite;
+}
+.lhc-0 { animation-delay: 0s; }
+.lhc-1 { animation-delay: 0.7s; }
+.lhc-2 { animation-delay: 1.4s; }
+.lhc-3 { animation-delay: 2.1s; }
+.lhc-4 { animation-delay: 0.35s; }
+.lhc-5 { animation-delay: 1.05s; }
+
+@keyframes card-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-7px); }
+}
+
+/* Alternate aspect ratios for visual depth */
+.lhc-0 .lhc-img { aspect-ratio: 3/4; }
+.lhc-1 .lhc-img { aspect-ratio: 4/5; }
+.lhc-2 .lhc-img { aspect-ratio: 4/5; }
+.lhc-3 .lhc-img { aspect-ratio: 3/4; }
+.lhc-4 .lhc-img { aspect-ratio: 1/1; }
+.lhc-5 .lhc-img { aspect-ratio: 1/1; }
+
+.lhc-img {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  position: relative;
+  overflow: hidden;
+}
+.lhc-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.landing-hero-card:hover .lhc-img img { transform: scale(1.05); }
+
+.lhc-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  background: rgba(255,255,255,0.05);
+}
+
+.lhc-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.4rem 0.75rem 0.75rem;
+  background: linear-gradient(transparent, rgba(20,18,16,0.78));
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+
+.lhc-price {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  color: #fff;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.lhc-cond {
+  font-size: 0.56rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  background: rgba(245,240,232,0.15);
+  color: rgba(245,240,232,0.9);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.lhc-skeleton {
+  pointer-events: none;
+  animation: lhc-pulse 1.6s ease-in-out infinite;
+  background: rgba(255,255,255,0.06);
+  border-radius: 8px;
+  min-height: 160px;
+}
+@keyframes lhc-pulse {
+  0%, 100% { opacity: 0.35; }
+  50%       { opacity: 0.7; }
+}
+
+/* — FEATURED — */
+.landing-featured {
+  padding: 5.5rem 2.5rem;
+  background: var(--cream);
+}
+
+.landing-featured-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.landing-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.landing-section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  letter-spacing: 0.02em;
+  color: var(--black);
+}
+
+.landing-see-all {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.landing-see-all:hover { color: var(--rust); }
+
+.landing-scroll {
+  display: flex;
+  gap: 1.2rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.landing-scroll::-webkit-scrollbar { display: none; }
+
+.landing-scroll-card {
+  flex: 0 0 190px;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: transform 0.2s;
+}
+.landing-scroll-card:hover { transform: translateY(-3px); }
+
+.landing-scroll-img {
+  width: 100%;
+  aspect-ratio: 3/4;
+  background: var(--border);
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  margin-bottom: 0.65rem;
+}
+.landing-scroll-img img { width: 100%; height: 100%; object-fit: cover; }
+
+.landing-scroll-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  background: linear-gradient(135deg, #e8e2d8, #d4cec4);
+}
+
+.landing-scroll-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--black);
+  color: var(--cream);
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+}
+
+.landing-scroll-name {
+  font-size: 0.88rem;
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.landing-scroll-price {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+  color: var(--black);
+}
+
+/* — HOW IT WORKS — */
+.landing-how {
+  background: var(--warm);
+  padding: 6.5rem 2.5rem;
+}
+
+.landing-how-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.landing-how-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  color: var(--cream);
+  letter-spacing: 0.02em;
+  margin-bottom: 3.5rem;
+}
+
+.landing-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+}
+
+.landing-step {}
+
+.landing-step-icon {
+  width: 44px;
+  height: 44px;
+  color: var(--rust);
+  margin-bottom: 1.4rem;
+}
+.landing-step-icon svg { width: 100%; height: 100%; }
+
+.landing-step-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.2rem;
+  color: rgba(245,240,232,0.1);
+  line-height: 1;
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.05em;
+}
+
+.landing-step-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.65rem;
+  letter-spacing: 0.02em;
+  color: var(--cream);
+  margin-bottom: 0.8rem;
+}
+
+.landing-step-desc {
+  font-size: 0.9rem;
+  font-weight: 300;
+  line-height: 1.75;
+  color: rgba(245,240,232,0.58);
+  margin: 0;
+}
+
+/* — FOOTER — */
+.landing-footer {
+  background: var(--black);
+  padding: 3rem 2.5rem 2rem;
+}
+
+.landing-footer-inner {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(245,240,232,0.08);
+}
+
+.landing-footer-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.9rem;
+  letter-spacing: 0.08em;
+  color: var(--cream);
+  margin-bottom: 0.3rem;
+}
+.landing-footer-logo span { color: var(--rust); }
+
+.landing-footer-tag {
+  font-size: 0.74rem;
+  font-weight: 300;
+  color: rgba(245,240,232,0.38);
+  letter-spacing: 0.08em;
+}
+
+.landing-footer-links {
+  display: flex;
+  gap: 2rem;
+  padding-top: 0.3rem;
+}
+
+.landing-footer-link {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,0.38);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.landing-footer-link:hover { color: var(--cream); }
+
+.landing-footer-copy {
+  max-width: 1200px;
+  margin: 0 auto;
+  font-size: 0.72rem;
+  color: rgba(245,240,232,0.2);
+  letter-spacing: 0.06em;
+}
+
+/* — LANDING RESPONSIVE — */
+@media(max-width: 768px) {
+  .landing-hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    margin-top: 52px;
+  }
+  .landing-hero-left { padding: 3rem 1.5rem 2.5rem; }
+  .landing-hero-right { padding: 2rem 1.5rem 3.5rem; }
+  .landing-headline { font-size: clamp(3.2rem, 15vw, 5rem); }
+  .landing-accent   { font-size: clamp(3rem, 13vw, 4.5rem); }
+  .landing-hero-grid { max-width: 100%; }
+  .landing-hide-mobile { display: none; }
+
+  .landing-featured { padding: 3rem 1.2rem; }
+  .landing-scroll-card { flex: 0 0 150px; }
+
+  .landing-how { padding: 3.5rem 1.5rem; }
+  .landing-steps { grid-template-columns: 1fr; gap: 2.5rem; }
+
+  .landing-footer { padding: 2.5rem 1.5rem 1.5rem; }
+  .landing-footer-inner { flex-direction: column; gap: 1.5rem; }
+  .landing-footer-links { gap: 1.5rem; }
+}
