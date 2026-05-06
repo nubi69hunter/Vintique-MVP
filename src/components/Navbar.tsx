@@ -11,7 +11,7 @@ export default function Navbar() {
   const [unreadCount, setUnreadCount] = useState(0);
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  const isHome = location.pathname === '/';
+  const isMarket = location.pathname === '/market';
   const activeGender = searchParams.get('gender') || 'all';
 
   const displayName = profile?.username
@@ -63,7 +63,7 @@ export default function Navbar() {
 
         {/* Desktop right */}
         <div className="nav-right">
-          <Link className="nav-link" to="/">Browse</Link>
+          <Link className="nav-link" to="/market">Browse</Link>
           {user ? (
             <>
               <Link className="nav-link nav-inbox-btn" to="/inbox">
@@ -139,11 +139,11 @@ export default function Navbar() {
         </div>
       )}
 
-      {isHome && (
+      {isMarket && (
         <div className="nav-gender-bar">
-          <Link to="/" className={`nav-gender-tab${activeGender === 'all' ? ' active' : ''}`}>All</Link>
-          <Link to="/?gender=women" className={`nav-gender-tab${activeGender === 'women' ? ' active' : ''}`}>Women</Link>
-          <Link to="/?gender=men" className={`nav-gender-tab${activeGender === 'men' ? ' active' : ''}`}>Men</Link>
+          <Link to="/market" className={`nav-gender-tab${activeGender === 'all' ? ' active' : ''}`}>All</Link>
+          <Link to="/market?gender=women" className={`nav-gender-tab${activeGender === 'women' ? ' active' : ''}`}>Women</Link>
+          <Link to="/market?gender=men" className={`nav-gender-tab${activeGender === 'men' ? ' active' : ''}`}>Men</Link>
         </div>
       )}
     </>
