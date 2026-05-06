@@ -9,6 +9,8 @@ export default function Navbar() {
   const { openAuthModal } = useUI();
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [scrolled, setScrolled] = useState(false);
+  const [dark, setDark] = useState(() => localStorage.getItem('theme') === 'dark');
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const isMarket = location.pathname === '/market';
@@ -20,9 +22,22 @@ export default function Navbar() {
     ? `@${user.user_metadata.username}`
     : 'Profile';
 
+  // Dark mode
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', dark);
+    localStorage.setItem('theme', dark ? 'dark' : 'light');
+  }, [dark]);
+
+  // Nav scroll shadow
+  useEffect(() => {
+    const handler = () => setScrolled(window.scrollY > 24);
+    window.addEventListener('scroll', handler, { passive: true });
+    return () => window.removeEventListener('scroll', handler);
+  }, []);
+
+  // Unread messages
   useEffect(() => {
     if (!user) { setUnreadCount(0); return; }
-
     const fetchUnread = () => {
       supabase
         .from('messages')
@@ -31,9 +46,7 @@ export default function Navbar() {
         .eq('is_read', false)
         .then(({ count }) => setUnreadCount(count ?? 0));
     };
-
     fetchUnread();
-
     const channel = supabase
       .channel(`unread-nav-${user.id}`)
       .on('postgres_changes', {
@@ -41,7 +54,6 @@ export default function Navbar() {
         filter: `receiver_id=eq.${user.id}`,
       }, fetchUnread)
       .subscribe();
-
     return () => { supabase.removeChannel(channel); };
   }, [user]);
 
@@ -52,18 +64,42 @@ export default function Navbar() {
     </svg>
   );
 
+  const SunIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/>
+      <line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+  );
+
+  const MoonIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  );
+
+  const toggleDark = () => setDark(d => !d);
+
   return (
     <>
-      <nav>
+      <nav className={scrolled ? 'nav-scrolled' : ''}>
         <Link className="nav-logo" to="/">VIN<span>T</span>IQUE</Link>
+
         <div className="nav-center">
           <input type="text" placeholder="Search for items, brands, sellers..." />
           <button>Search</button>
         </div>
 
-        {/* Desktop right */}
+        {/* Desktop nav */}
         <div className="nav-right">
-          <Link className="nav-link" to="/market">Browse</Link>
+          <Link className="nav-link" to="/market">Market</Link>
+          <Link className="nav-link" to="/sell">Sell</Link>
           {user ? (
             <>
               <Link className="nav-link nav-inbox-btn" to="/inbox">
@@ -73,7 +109,6 @@ export default function Navbar() {
                 )}
               </Link>
               <Link className="nav-link" to="/profile">{displayName}</Link>
-              <Link className="btn-sell" to="/sell">+ Sell</Link>
               <button
                 className="nav-link"
                 style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit', padding: 0, color: 'inherit' }}
@@ -83,17 +118,17 @@ export default function Navbar() {
               </button>
             </>
           ) : (
-            <>
-              <Link className="btn-sell" to="/sell">+ Sell</Link>
-              <button
-                className="nav-link"
-                style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit', padding: 0, color: 'inherit' }}
-                onClick={openAuthModal}
-              >
-                Login
-              </button>
-            </>
+            <button
+              className="nav-link"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit', padding: 0, color: 'inherit' }}
+              onClick={openAuthModal}
+            >
+              Login
+            </button>
           )}
+          <button className="nav-icon-btn nav-dark-btn" onClick={toggleDark} aria-label="Toggle dark mode">
+            {dark ? <SunIcon /> : <MoonIcon />}
+          </button>
         </div>
 
         {/* Mobile icons */}
@@ -129,6 +164,9 @@ export default function Navbar() {
               </svg>
             </button>
           )}
+          <button className="nav-icon-btn nav-dark-btn" onClick={toggleDark} aria-label="Toggle dark mode">
+            {dark ? <SunIcon /> : <MoonIcon />}
+          </button>
         </div>
       </nav>
 
