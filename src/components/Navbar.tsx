@@ -101,13 +101,13 @@ export default function Navbar() {
   return (
     <>
       <nav className={scrolled ? 'nav-scrolled' : ''}>
-        {/* Logo — left */}
-        <Link className="nav-logo" to="/">VIN<span>T</span>IQUE</Link>
-
-        {/* Center text links — desktop only */}
-        <div className="nav-center-links">
-          <Link className="nav-link" to="/market">Market</Link>
-          <Link className="nav-link" to="/sell">Sell</Link>
+        {/* Left group: logo + text links (desktop) */}
+        <div className="nav-left">
+          <Link className="nav-logo" to="/">VIN<span>T</span>IQUE</Link>
+          <div className="nav-text-links">
+            <Link className="nav-link" to="/market">Market</Link>
+            <Link className="nav-link" to="/sell">Sell</Link>
+          </div>
         </div>
 
         {/* Right icon row — always visible, single dark toggle */}

@@ -41,10 +41,11 @@ body { background: var(--cream); color: var(--black); font-family: 'DM Sans', sa
 
 /* NAV */
 nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; align-items: center; justify-content: space-between; padding: 1rem 2.5rem; background: rgba(245,240,232,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+/* Left group: logo + text links */
+.nav-left { display: flex; align-items: center; gap: 2rem; }
 .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 0.08em; color: var(--black); text-decoration: none; }
 .nav-logo span { color: var(--rust); }
-/* Center text links — visible on desktop */
-.nav-center-links { display: none; align-items: center; gap: 2rem; }
+.nav-text-links { display: none; align-items: center; gap: 1.8rem; }
 .nav-right { display: flex; align-items: center; gap: 0.4rem; }
 .nav-link { font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; cursor: pointer; }
 .nav-link:hover { color: var(--black); }
@@ -70,13 +71,70 @@ html.dark .market-toolbar { background: #1a1814; border-bottom-color: rgba(237,2
 html.dark .filters-toggle-btn { color: rgba(237,229,216,0.55); border-color: rgba(237,229,216,0.15); }
 html.dark .filters-toggle-btn:hover, html.dark .filters-toggle-btn.active { background: #ede5d8; color: #1a1814; border-color: #ede5d8; }
 
+/* ── DARK MODE COMPONENT OVERRIDES ── */
+
+/* Market page sidebar */
+html.dark .sidebar { background: #1a1814; }
+html.dark .sidebar-category-parent { color: rgba(237,229,216,0.52); }
+html.dark .sidebar-category-parent:hover { color: #ede5d8; }
+html.dark .filter-item { color: #ede5d8; }
+html.dark .price-input { color: #ede5d8; border-color: rgba(237,229,216,0.15); background: rgba(237,229,216,0.04); }
+html.dark .sort-select { color: #ede5d8; border-color: rgba(237,229,216,0.15); background: #1a1814; }
+html.dark .listings-count { color: rgba(237,229,216,0.52); }
+
+/* Listing cards */
+html.dark .card-price { color: #ede5d8; }
+html.dark .card-title { color: #ede5d8; }
+html.dark .card-img-placeholder { background: linear-gradient(135deg, #2a2420, #211c18); }
+html.dark .card-badge { background: #ede5d8; color: #1a1814; }
+
+/* Listing detail */
+html.dark .detail-meta { background: #211c18; border-color: rgba(237,229,216,0.10); }
+html.dark .detail-info { border-left-color: rgba(237,229,216,0.10); }
+html.dark .main-img-placeholder { background: linear-gradient(135deg, #2a2420, #211c18); }
+html.dark .badge { border-color: rgba(237,229,216,0.15); color: #ede5d8; }
+html.dark .badge.condition { background: #ede5d8; color: #1a1814; border-color: #ede5d8; }
+html.dark .btn-secondary { color: #ede5d8; border-color: rgba(237,229,216,0.35); }
+html.dark .btn-secondary:hover { background: #ede5d8; color: #1a1814; border-color: #ede5d8; }
+
+/* Forms — sell, auth, onboarding, profile */
+html.dark .form-input { color: #ede5d8; border-color: rgba(237,229,216,0.15); }
+html.dark .form-input::placeholder { color: rgba(237,229,216,0.32); }
+html.dark .form-select { background: #1e1a16; color: #ede5d8; border-color: rgba(237,229,216,0.15); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23ede5d8' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; }
+html.dark .form-textarea { color: #ede5d8; border-color: rgba(237,229,216,0.15); }
+html.dark .form-textarea::placeholder { color: rgba(237,229,216,0.32); }
+html.dark .auth-tab.active { color: #ede5d8; }
+html.dark .auth-right { background: #1a1814; }
+html.dark .modal { background: #221e1a; }
+html.dark .modal-radio-row { color: #ede5d8; }
+html.dark .chat-msg.received { background: #2a2420; color: #ede5d8; border-color: rgba(237,229,216,0.10); }
+html.dark .conv-input { color: #ede5d8; background: #1a1814; }
+html.dark .conv-msg-row.theirs .conv-bubble { background: #2a2420; color: #ede5d8; border-color: rgba(237,229,216,0.10); }
+
+/* Sell page */
+html.dark .sell-steps { border-color: rgba(237,229,216,0.10); }
+html.dark .sell-step { border-right-color: rgba(237,229,216,0.10); color: rgba(237,229,216,0.52); }
+html.dark .upload-zone { border-color: rgba(237,229,216,0.15); }
+html.dark .gender-toggle { border-color: rgba(237,229,216,0.15); }
+html.dark .gender-toggle-btn { background: #1e1a16; color: rgba(237,229,216,0.52); border-right-color: rgba(237,229,216,0.15); }
+html.dark .gender-toggle-btn.active { background: #ede5d8; color: #1a1814; }
+html.dark .gender-toggle-btn:hover:not(.active) { background: #2a2420; color: #ede5d8; }
+
+/* Profile */
+html.dark .profile-listing-edit { background: #211c18; color: #ede5d8; border-color: rgba(237,229,216,0.15); }
+html.dark .profile-listing-edit:hover { border-color: #ede5d8; color: #ede5d8; }
+
+/* Filter sheet (mobile) */
+html.dark .filter-sheet { background: #1e1a16; }
+html.dark .filter-sheet-handle { background: rgba(237,229,216,0.15); }
+
 /* dark mode toggle button */
 .nav-dark-btn { opacity: 0.6; }
 .nav-dark-btn:hover { opacity: 1; color: var(--lp-accent); }
 
-/* desktop: show center text links, expand right icon gap, show market toolbar */
+/* desktop: show left text links, expand right icon gap, show market toolbar */
 @media(min-width: 769px) {
-  .nav-center-links { display: flex; }
+  .nav-text-links { display: flex; }
   .nav-right { gap: 0.6rem; }
   .market-toolbar { display: flex; }
 }
@@ -351,7 +409,8 @@ html.dark .filters-toggle-btn:hover, html.dark .filters-toggle-btn.active { back
   /* Navbar — slim with icon-only right side */
   nav { padding: 0.6rem 1rem; }
   .nav-logo { font-size: 1.2rem; }
-  .nav-center-links { display: none; }
+  .nav-text-links { display: none; }
+  .nav-left { gap: 0; }
   .nav-right { gap: 0.1rem; }
   .page { padding-top: 52px; }
 
@@ -416,15 +475,15 @@ html.dark .filters-toggle-btn:hover, html.dark .filters-toggle-btn.active { back
 .modal-radio-row input[type="radio"] { flex-shrink: 0; width: 16px; height: 16px; cursor: pointer; }
 .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
 
-/* GENDER TAB BAR — fixed below main nav, always light cream in both themes */
-.nav-gender-bar { position: fixed; top: 70px; left: 0; right: 0; z-index: 998; background: rgba(237,229,216,0.97) !important; backdrop-filter: blur(12px); border-bottom: 1px solid rgba(26,24,20,0.10) !important; display: flex; align-items: center; justify-content: center; height: 44px; }
-.nav-gender-tab { padding: 0 2.5rem; height: 100%; display: flex; align-items: center; font-size: 0.73rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(26,24,20,0.52); text-decoration: none; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; }
-.nav-gender-tab:hover { color: #1a1814; }
-.nav-gender-tab.active { color: #1a1814; border-bottom-color: #c4622d; }
-html.dark .nav-gender-bar { background: rgba(237,229,216,0.97) !important; border-bottom-color: rgba(26,24,20,0.10) !important; }
-html.dark .nav-gender-tab { color: rgba(26,24,20,0.52); }
-html.dark .nav-gender-tab:hover { color: #1a1814; }
-html.dark .nav-gender-tab.active { color: #1a1814; border-bottom-color: #c4622d; }
+/* GENDER TAB BAR — fixed below main nav */
+.nav-gender-bar { position: fixed; top: 70px; left: 0; right: 0; z-index: 998; background: rgba(245,240,232,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: center; height: 44px; }
+.nav-gender-tab { padding: 0 2.5rem; height: 100%; display: flex; align-items: center; font-size: 0.73rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; }
+.nav-gender-tab:hover { color: var(--black); }
+.nav-gender-tab.active { color: var(--black); border-bottom-color: var(--rust); }
+html.dark .nav-gender-bar { background: rgba(26,24,20,0.97); border-bottom-color: rgba(237,229,216,0.08); }
+html.dark .nav-gender-tab { color: rgba(237,229,216,0.52); }
+html.dark .nav-gender-tab:hover { color: #ede5d8; }
+html.dark .nav-gender-tab.active { color: #ede5d8; border-bottom-color: #c4622d; }
 
 /* Home page needs extra top padding for gender bar */
 .home-page { padding-top: 114px !important; }
