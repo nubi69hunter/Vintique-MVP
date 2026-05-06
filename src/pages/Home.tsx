@@ -4,7 +4,15 @@ import ListingCard from '../components/ListingCard';
 import { Listing } from '../data';
 import { supabase } from '../lib/supabase';
 
-const CATEGORIES = ['Tops & Shirts', 'Dresses', 'Pants & Jeans', 'Outerwear', 'Shoes', 'Bags', 'Accessories'];
+const CATEGORY_MAP: Record<string, string[]> = {
+  'Clothing': ['Tops', 'T-shirts', 'Shirts', 'Hoodies & Sweatshirts', 'Jackets & Coats', 'Dresses', 'Abayas', 'Pants & Jeans', 'Shorts', 'Skirts', 'Activewear', 'Loungewear', 'Underwear & Sleepwear'],
+  'Shoes': ['Sneakers', 'Boots', 'Heels', 'Sandals', 'Formal'],
+  'Bags': ['Handbags', 'Backpacks', 'Crossbody', 'Totes', 'Wallets'],
+  'Accessories': ['Belts', 'Sunglasses', 'Watches', 'Jewelry', 'Scarves'],
+  'Headwear': ['Caps', 'Hats', 'Beanies', 'Shemaghs'],
+  'Fragrances': ['Perfumes', 'Body Sprays', 'Oud'],
+};
+
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'One size'];
 const CONDITIONS = ['New with tags', 'Like new', 'Good', 'Fair'];
 
@@ -15,6 +23,8 @@ export default function Home() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterOpen, setFilterOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>(['Clothing']);
 
   const [categories, setCategories] = useState<string[]>([]);
   const [sizes, setSizes] = useState<string[]>([]);
@@ -36,6 +46,12 @@ export default function Home() {
 
   const toggle = (setter: React.Dispatch<React.SetStateAction<string[]>>, value: string) => {
     setter(prev => prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]);
+  };
+
+  const toggleExpandedCategory = (parent: string) => {
+    setExpandedCategories(prev =>
+      prev.includes(parent) ? prev.filter(p => p !== parent) : [...prev, parent]
+    );
   };
 
   useEffect(() => {
@@ -72,17 +88,32 @@ export default function Home() {
     <>
       <div className="sidebar-section">
         <div className="sidebar-title">Category</div>
-        <div className="filter-group">
-          {CATEGORIES.map(c => (
-            <label key={c} className="filter-item">
-              <input
-                type="checkbox"
-                checked={categories.includes(c)}
-                onChange={() => toggle(setCategories, c)}
-              /> {c}
-            </label>
-          ))}
-        </div>
+        {Object.entries(CATEGORY_MAP).map(([parent, subs]) => (
+          <div key={parent} className="sidebar-category-group">
+            <button
+              className="sidebar-category-parent"
+              onClick={() => toggleExpandedCategory(parent)}
+            >
+              {parent}
+              <span className="sidebar-category-chevron">
+                {expandedCategories.includes(parent) ? '−' : '+'}
+              </span>
+            </button>
+            {expandedCategories.includes(parent) && (
+              <div className="filter-group sidebar-subcategories">
+                {subs.map(sub => (
+                  <label key={sub} className="filter-item">
+                    <input
+                      type="checkbox"
+                      checked={categories.includes(sub)}
+                      onChange={() => toggle(setCategories, sub)}
+                    /> {sub}
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
       <div className="sidebar-section">
         <div className="sidebar-title">Size</div>
@@ -136,22 +167,42 @@ export default function Home() {
   );
 
   const activeFilterCount = categories.length + sizes.length + conditions.length + (priceMin || priceMax ? 1 : 0);
+  const clearFilters = () => {
+    setCategories([]); setSizes([]); setConditions([]);
+    setPriceMinInput(''); setPriceMaxInput('');
+  };
 
   return (
     <div className="page home-page" style={{ display: 'block' }}>
+      {/* Filters toggle toolbar — desktop only */}
+      <div className="market-toolbar">
+        <button
+          className={`filters-toggle-btn${sidebarOpen ? ' active' : ''}`}
+          onClick={() => setSidebarOpen(o => !o)}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+          </svg>
+          {sidebarOpen ? 'Hide Filters' : 'Filters'}
+          {activeFilterCount > 0 && ` (${activeFilterCount})`}
+        </button>
+      </div>
+
       <div className="home-layout">
-        {/* SIDEBAR — desktop only */}
-        <aside className="sidebar">
-          {filterContent}
-          {activeFilterCount > 0 && (
-            <button
-              className="filter-btn"
-              style={{ marginBottom: '0.5rem', background: 'transparent', color: 'var(--rust)', border: '1px solid var(--rust)' }}
-              onClick={() => { setCategories([]); setSizes([]); setConditions([]); setPriceMinInput(''); setPriceMaxInput(''); }}
-            >
-              Clear filters ({activeFilterCount})
-            </button>
-          )}
+        {/* SIDEBAR — desktop, toggleable */}
+        <aside className={`sidebar${sidebarOpen ? ' sidebar-open' : ' sidebar-collapsed'}`}>
+          <div className="sidebar-inner">
+            {filterContent}
+            {activeFilterCount > 0 && (
+              <button
+                className="filter-btn"
+                style={{ marginBottom: '0.5rem', background: 'transparent', color: 'var(--rust)', border: '1px solid var(--rust)' }}
+                onClick={clearFilters}
+              >
+                Clear filters ({activeFilterCount})
+              </button>
+            )}
+          </div>
         </aside>
 
         {/* LISTINGS */}
@@ -204,7 +255,7 @@ export default function Home() {
           <button
             className="filter-btn"
             style={{ marginBottom: '0.5rem', background: 'transparent', color: 'var(--rust)', border: '1px solid var(--rust)' }}
-            onClick={() => { setCategories([]); setSizes([]); setConditions([]); setPriceMinInput(''); setPriceMaxInput(''); }}
+            onClick={clearFilters}
           >
             Clear filters ({activeFilterCount})
           </button>

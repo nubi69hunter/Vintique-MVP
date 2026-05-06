@@ -4,6 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
+const CATEGORY_MAP: Record<string, string[]> = {
+  'Clothing': ['Tops', 'T-shirts', 'Shirts', 'Hoodies & Sweatshirts', 'Jackets & Coats', 'Dresses', 'Abayas', 'Pants & Jeans', 'Shorts', 'Skirts', 'Activewear', 'Loungewear', 'Underwear & Sleepwear'],
+  'Shoes': ['Sneakers', 'Boots', 'Heels', 'Sandals', 'Formal'],
+  'Bags': ['Handbags', 'Backpacks', 'Crossbody', 'Totes', 'Wallets'],
+  'Accessories': ['Belts', 'Sunglasses', 'Watches', 'Jewelry', 'Scarves'],
+  'Headwear': ['Caps', 'Hats', 'Beanies', 'Shemaghs'],
+  'Fragrances': ['Perfumes', 'Body Sprays', 'Oud'],
+};
+
 export default function Sell() {
   const [step, setStep] = useState(1);
   const { showToast, openAuthModal } = useUI();
@@ -12,7 +21,8 @@ export default function Sell() {
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('Tops & Shirts');
+  const [parentCategory, setParentCategory] = useState('Clothing');
+  const [category, setCategory] = useState('Tops');
   const [size, setSize] = useState('M');
   const [brand, setBrand] = useState('');
   const [condition, setCondition] = useState('Good');
@@ -172,16 +182,26 @@ export default function Sell() {
               <div className="form-row">
                 <div className="form-group">
                   <label className="form-label">Category</label>
-                  <select className="form-select" value={category} onChange={e => setCategory(e.target.value)}>
-                    <option>Tops & Shirts</option>
-                    <option>Dresses</option>
-                    <option>Pants & Jeans</option>
-                    <option>Outerwear</option>
-                    <option>Shoes</option>
-                    <option>Bags</option>
-                    <option>Accessories</option>
+                  <select
+                    className="form-select"
+                    value={parentCategory}
+                    onChange={e => {
+                      const p = e.target.value;
+                      setParentCategory(p);
+                      setCategory(CATEGORY_MAP[p][0]);
+                    }}
+                  >
+                    {Object.keys(CATEGORY_MAP).map(p => <option key={p}>{p}</option>)}
                   </select>
                 </div>
+                <div className="form-group">
+                  <label className="form-label">Sub-category</label>
+                  <select className="form-select" value={category} onChange={e => setCategory(e.target.value)}>
+                    {CATEGORY_MAP[parentCategory].map(s => <option key={s}>{s}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div className="form-row">
                 <div className="form-group">
                   <label className="form-label">Size</label>
                   <select className="form-select" value={size} onChange={e => setSize(e.target.value)}>
@@ -193,12 +213,6 @@ export default function Sell() {
                     <option>One size</option>
                   </select>
                 </div>
-              </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label className="form-label">Brand</label>
-                  <input className="form-input" type="text" placeholder="e.g. Zara, H&M, Nike" value={brand} onChange={e => setBrand(e.target.value)} />
-                </div>
                 <div className="form-group">
                   <label className="form-label">Condition</label>
                   <select className="form-select" value={condition} onChange={e => setCondition(e.target.value)}>
@@ -208,6 +222,10 @@ export default function Sell() {
                     <option>Fair</option>
                   </select>
                 </div>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Brand</label>
+                <input className="form-input" type="text" placeholder="e.g. Zara, H&M, Nike" value={brand} onChange={e => setBrand(e.target.value)} />
               </div>
             </div>
             <div className="sell-nav">

@@ -5,7 +5,7 @@ import { useUI } from '../contexts/UIContext';
 import { supabase } from '../lib/supabase';
 
 export default function Navbar() {
-  const { user, profile, signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const { openAuthModal } = useUI();
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -15,12 +15,6 @@ export default function Navbar() {
   const [searchParams] = useSearchParams();
   const isMarket = location.pathname === '/market';
   const activeGender = searchParams.get('gender') || 'all';
-
-  const displayName = profile?.username
-    ? `@${profile.username}`
-    : user?.user_metadata?.username
-    ? `@${user.user_metadata.username}`
-    : 'Profile';
 
   // Dark mode
   useEffect(() => {
@@ -64,6 +58,24 @@ export default function Navbar() {
     </svg>
   );
 
+  const SearchIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+  );
+
+  const PlusIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+  );
+
+  const ProfileIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+    </svg>
+  );
+
   const SunIcon = () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="5"/>
@@ -89,55 +101,23 @@ export default function Navbar() {
   return (
     <>
       <nav className={scrolled ? 'nav-scrolled' : ''}>
+        {/* Logo — left */}
         <Link className="nav-logo" to="/">VIN<span>T</span>IQUE</Link>
 
-        <div className="nav-center">
-          <input type="text" placeholder="Search for items, brands, sellers..." />
-          <button>Search</button>
-        </div>
-
-        {/* Desktop nav */}
-        <div className="nav-right">
+        {/* Center text links — desktop only */}
+        <div className="nav-center-links">
           <Link className="nav-link" to="/market">Market</Link>
           <Link className="nav-link" to="/sell">Sell</Link>
-          {user ? (
-            <>
-              <Link className="nav-link nav-inbox-btn" to="/inbox">
-                <InboxIcon />
-                {unreadCount > 0 && (
-                  <span className="nav-inbox-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
-                )}
-              </Link>
-              <Link className="nav-link" to="/profile">{displayName}</Link>
-              <button
-                className="nav-link"
-                style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit', padding: 0, color: 'inherit' }}
-                onClick={signOut}
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <button
-              className="nav-link"
-              style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit', padding: 0, color: 'inherit' }}
-              onClick={openAuthModal}
-            >
-              Login
-            </button>
-          )}
-          <button className="nav-icon-btn nav-dark-btn" onClick={toggleDark} aria-label="Toggle dark mode">
-            {dark ? <SunIcon /> : <MoonIcon />}
-          </button>
         </div>
 
-        {/* Mobile icons */}
-        <div className="nav-mobile-right">
+        {/* Right icon row — always visible, single dark toggle */}
+        <div className="nav-right">
           <button className="nav-icon-btn" onClick={() => setMobileSearchOpen(o => !o)} aria-label="Search">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
+            <SearchIcon />
           </button>
+          <Link className="nav-icon-btn nav-icon-sell" to="/sell" aria-label="Sell">
+            <PlusIcon />
+          </Link>
           {user && (
             <Link className="nav-icon-btn nav-inbox-btn" to="/inbox" aria-label="Inbox">
               <InboxIcon />
@@ -146,22 +126,13 @@ export default function Navbar() {
               )}
             </Link>
           )}
-          <Link className="nav-icon-btn nav-icon-sell" to="/sell" aria-label="Sell">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
-          </Link>
           {user ? (
             <Link className="nav-icon-btn" to="/profile" aria-label="Profile">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-              </svg>
+              <ProfileIcon />
             </Link>
           ) : (
             <button className="nav-icon-btn" onClick={openAuthModal} aria-label="Login">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-              </svg>
+              <ProfileIcon />
             </button>
           )}
           <button className="nav-icon-btn nav-dark-btn" onClick={toggleDark} aria-label="Toggle dark mode">
