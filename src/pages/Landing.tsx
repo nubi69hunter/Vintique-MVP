@@ -23,18 +23,6 @@ function useReveal(threshold = 0.14) {
   return { ref, visible };
 }
 
-function handleMagnetMove(e: React.MouseEvent<HTMLAnchorElement>) {
-  const el = e.currentTarget;
-  const rect = el.getBoundingClientRect();
-  const x = (e.clientX - rect.left - rect.width / 2) * 0.2;
-  const y = (e.clientY - rect.top - rect.height / 2) * 0.2;
-  el.style.transform = `translate(${x}px, ${y - 2}px)`;
-}
-
-function handleMagnetLeave(e: React.MouseEvent<HTMLAnchorElement>) {
-  e.currentTarget.style.transform = '';
-}
-
 export default function Landing() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loaded, setLoaded] = useState(false);
@@ -75,18 +63,8 @@ export default function Landing() {
             Buy and sell pre-loved fashion,<br />safely and instantly.
           </p>
           <div className="lh-ctas">
-            <Link
-              to="/market"
-              className="lh-btn-primary"
-              onMouseMove={handleMagnetMove}
-              onMouseLeave={handleMagnetLeave}
-            >Shop Now</Link>
-            <Link
-              to="/sell"
-              className="lh-btn-secondary"
-              onMouseMove={handleMagnetMove}
-              onMouseLeave={handleMagnetLeave}
-            >Start Selling</Link>
+            <Link to="/market" className="lh-btn-primary">Shop Now</Link>
+            <Link to="/sell" className="lh-btn-secondary">Start Selling</Link>
           </div>
         </div>
 

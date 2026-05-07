@@ -13,7 +13,7 @@ export default function Footer() {
           <a href="mailto:srtmusab@gmail.com" className="site-footer-contact">srtmusab@gmail.com</a>
         </div>
       </div>
-      <div className="site-footer-copy">© 2026 Vintique. All rights reserved.</div>
+      <div className="site-footer-copy">© 2025 Vintique. All rights reserved.</div>
     </footer>
   );
 }
