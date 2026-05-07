@@ -24,7 +24,10 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [filterOpen, setFilterOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [expandedCategories, setExpandedCategories] = useState<string[]>(['Clothing']);
+
+  // All sections collapsed by default
+  const [expandedSections, setExpandedSections] = useState<string[]>([]);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
 
   const [categories, setCategories] = useState<string[]>([]);
   const [sizes, setSizes] = useState<string[]>([]);
@@ -46,6 +49,12 @@ export default function Home() {
 
   const toggle = (setter: React.Dispatch<React.SetStateAction<string[]>>, value: string) => {
     setter(prev => prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]);
+  };
+
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev =>
+      prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]
+    );
   };
 
   const toggleExpandedCategory = (parent: string) => {
@@ -86,82 +95,113 @@ export default function Home() {
 
   const filterContent = (
     <>
+      {/* CATEGORY */}
       <div className="sidebar-section">
-        <div className="sidebar-title">Category</div>
-        {Object.entries(CATEGORY_MAP).map(([parent, subs]) => (
-          <div key={parent} className="sidebar-category-group">
-            <button
-              className="sidebar-category-parent"
-              onClick={() => toggleExpandedCategory(parent)}
-            >
-              {parent}
-              <span className="sidebar-category-chevron">
-                {expandedCategories.includes(parent) ? '−' : '+'}
-              </span>
-            </button>
-            {expandedCategories.includes(parent) && (
-              <div className="filter-group sidebar-subcategories">
-                {subs.map(sub => (
-                  <label key={sub} className="filter-item">
-                    <input
-                      type="checkbox"
-                      checked={categories.includes(sub)}
-                      onChange={() => toggle(setCategories, sub)}
-                    /> {sub}
-                  </label>
-                ))}
+        <button className="sidebar-section-header" onClick={() => toggleSection('Category')}>
+          <span>Category{categories.length > 0 && <span className="sidebar-section-badge">{categories.length}</span>}</span>
+          <span className="sidebar-section-chevron">{expandedSections.includes('Category') ? '−' : '+'}</span>
+        </button>
+        {expandedSections.includes('Category') && (
+          <div className="sidebar-section-body">
+            {Object.entries(CATEGORY_MAP).map(([parent, subs]) => (
+              <div key={parent} className="sidebar-category-group">
+                <button
+                  className="sidebar-category-parent"
+                  onClick={() => toggleExpandedCategory(parent)}
+                >
+                  {parent}
+                  <span className="sidebar-category-chevron">
+                    {expandedCategories.includes(parent) ? '−' : '+'}
+                  </span>
+                </button>
+                {expandedCategories.includes(parent) && (
+                  <div className="sidebar-subcategories">
+                    {subs.map(sub => (
+                      <button
+                        key={sub}
+                        className={`filter-chip${categories.includes(sub) ? ' active' : ''}`}
+                        onClick={() => toggle(setCategories, sub)}
+                      >
+                        {sub}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
+            ))}
           </div>
-        ))}
+        )}
       </div>
+
+      {/* SIZE */}
       <div className="sidebar-section">
-        <div className="sidebar-title">Size</div>
-        <div className="filter-group">
-          {SIZES.map(s => (
-            <label key={s} className="filter-item">
+        <button className="sidebar-section-header" onClick={() => toggleSection('Size')}>
+          <span>Size{sizes.length > 0 && <span className="sidebar-section-badge">{sizes.length}</span>}</span>
+          <span className="sidebar-section-chevron">{expandedSections.includes('Size') ? '−' : '+'}</span>
+        </button>
+        {expandedSections.includes('Size') && (
+          <div className="sidebar-section-body">
+            {SIZES.map(s => (
+              <button
+                key={s}
+                className={`filter-chip${sizes.includes(s) ? ' active' : ''}`}
+                onClick={() => toggle(setSizes, s)}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* CONDITION */}
+      <div className="sidebar-section">
+        <button className="sidebar-section-header" onClick={() => toggleSection('Condition')}>
+          <span>Condition{conditions.length > 0 && <span className="sidebar-section-badge">{conditions.length}</span>}</span>
+          <span className="sidebar-section-chevron">{expandedSections.includes('Condition') ? '−' : '+'}</span>
+        </button>
+        {expandedSections.includes('Condition') && (
+          <div className="sidebar-section-body">
+            {CONDITIONS.map(c => (
+              <button
+                key={c}
+                className={`filter-chip${conditions.includes(c) ? ' active' : ''}`}
+                onClick={() => toggle(setConditions, c)}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* PRICE */}
+      <div className="sidebar-section">
+        <button className="sidebar-section-header" onClick={() => toggleSection('Price')}>
+          <span>Price (SAR){(priceMin || priceMax) && <span className="sidebar-section-badge">1</span>}</span>
+          <span className="sidebar-section-chevron">{expandedSections.includes('Price') ? '−' : '+'}</span>
+        </button>
+        {expandedSections.includes('Price') && (
+          <div className="sidebar-section-body">
+            <div className="price-range">
               <input
-                type="checkbox"
-                checked={sizes.includes(s)}
-                onChange={() => toggle(setSizes, s)}
-              /> {s}
-            </label>
-          ))}
-        </div>
-      </div>
-      <div className="sidebar-section">
-        <div className="sidebar-title">Condition</div>
-        <div className="filter-group">
-          {CONDITIONS.map(c => (
-            <label key={c} className="filter-item">
+                className="price-input"
+                type="number"
+                placeholder="Min"
+                value={priceMinInput}
+                onChange={e => setPriceMinInput(e.target.value)}
+              />
+              <span style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>—</span>
               <input
-                type="checkbox"
-                checked={conditions.includes(c)}
-                onChange={() => toggle(setConditions, c)}
-              /> {c}
-            </label>
-          ))}
-        </div>
-      </div>
-      <div className="sidebar-section">
-        <div className="sidebar-title">Price (SAR)</div>
-        <div className="price-range">
-          <input
-            className="price-input"
-            type="number"
-            placeholder="Min"
-            value={priceMinInput}
-            onChange={e => setPriceMinInput(e.target.value)}
-          />
-          <span style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>—</span>
-          <input
-            className="price-input"
-            type="number"
-            placeholder="Max"
-            value={priceMaxInput}
-            onChange={e => setPriceMaxInput(e.target.value)}
-          />
-        </div>
+                className="price-input"
+                type="number"
+                placeholder="Max"
+                value={priceMaxInput}
+                onChange={e => setPriceMaxInput(e.target.value)}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
@@ -196,10 +236,10 @@ export default function Home() {
             {activeFilterCount > 0 && (
               <button
                 className="filter-btn"
-                style={{ marginBottom: '0.5rem', background: 'transparent', color: 'var(--rust)', border: '1px solid var(--rust)' }}
+                style={{ marginTop: '1.5rem', background: 'transparent', color: 'var(--rust)', border: '1px solid var(--rust)' }}
                 onClick={clearFilters}
               >
-                Clear filters ({activeFilterCount})
+                Clear all ({activeFilterCount})
               </button>
             )}
           </div>
@@ -257,7 +297,7 @@ export default function Home() {
             style={{ marginBottom: '0.5rem', background: 'transparent', color: 'var(--rust)', border: '1px solid var(--rust)' }}
             onClick={clearFilters}
           >
-            Clear filters ({activeFilterCount})
+            Clear all ({activeFilterCount})
           </button>
         )}
         <button className="filter-btn" onClick={() => setFilterOpen(false)}>Done</button>

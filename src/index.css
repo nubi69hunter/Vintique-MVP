@@ -75,9 +75,14 @@ html.dark .filters-toggle-btn:hover, html.dark .filters-toggle-btn.active { back
 
 /* Market page sidebar */
 html.dark .sidebar { background: #1a1814; }
+html.dark .sidebar-section { border-bottom-color: rgba(237,229,216,0.08); }
+html.dark .sidebar-section-header { color: rgba(237,229,216,0.45); }
+html.dark .sidebar-section-header:hover { color: #ede5d8; }
 html.dark .sidebar-category-parent { color: rgba(237,229,216,0.52); }
 html.dark .sidebar-category-parent:hover { color: #ede5d8; }
-html.dark .filter-item { color: #ede5d8; }
+html.dark .filter-chip { color: rgba(237,229,216,0.42); }
+html.dark .filter-chip:hover { color: #ede5d8; border-left-color: rgba(196,98,45,0.35); }
+html.dark .filter-chip.active { color: #c4622d; border-left-color: #c4622d; }
 html.dark .price-input { color: #ede5d8; border-color: rgba(237,229,216,0.15); background: rgba(237,229,216,0.04); }
 html.dark .sort-select { color: #ede5d8; border-color: rgba(237,229,216,0.15); background: #1a1814; }
 html.dark .listings-count { color: rgba(237,229,216,0.52); }
@@ -153,23 +158,29 @@ html.dark .filter-sheet-handle { background: rgba(237,229,216,0.15); }
 .sidebar-open { width: 240px; overflow-y: auto; border-right: 1px solid var(--border); }
 .sidebar-collapsed { width: 0; overflow: hidden; border-right: none; }
 .sidebar-inner { padding: 2rem 1.5rem; width: 240px; }
-.sidebar-section { margin-bottom: 2rem; }
-.sidebar-title { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; }
-.filter-group { display: flex; flex-direction: column; gap: 0.5rem; }
-.filter-item { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-size: 0.85rem; color: var(--black); padding: 0.3rem 0; }
-.filter-item input { accent-color: var(--rust); }
+.sidebar-section { margin-bottom: 0; border-bottom: 1px solid var(--border); }
+/* Collapsible section header */
+.sidebar-section-header { display: flex; align-items: center; justify-content: space-between; width: 100%; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); padding: 0.85rem 0; text-align: left; transition: color 0.2s; }
+.sidebar-section-header:hover { color: var(--black); }
+.sidebar-section-chevron { font-size: 0.9rem; font-weight: 300; flex-shrink: 0; }
+.sidebar-section-badge { display: inline-flex; align-items: center; justify-content: center; background: #c4622d; color: #fff; font-size: 0.58rem; font-weight: 700; border-radius: 8px; padding: 1px 5px; margin-left: 0.4rem; letter-spacing: 0; text-transform: none; vertical-align: middle; }
+.sidebar-section-body { padding-bottom: 0.5rem; }
+/* Filter chip — text-only, left accent when active */
+.filter-chip { display: block; width: 100%; text-align: left; background: none; border: none; border-left: 3px solid transparent; padding: 0.32rem 0.4rem 0.32rem 0.7rem; font-family: 'DM Sans', sans-serif; font-size: 0.84rem; font-weight: 400; color: var(--muted); cursor: pointer; transition: color 0.15s, border-color 0.15s; letter-spacing: 0.01em; }
+.filter-chip:hover { color: var(--black); border-left-color: rgba(196,98,45,0.3); }
+.filter-chip.active { color: #c4622d; border-left-color: #c4622d; font-weight: 500; }
 .price-range { display: flex; gap: 0.5rem; align-items: center; }
 .price-input { width: 80px; padding: 0.4rem 0.6rem; border: 1px solid var(--border); background: transparent; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; color: var(--black); outline: none; }
 .price-input:focus { border-color: var(--rust); }
 .filter-btn { width: 100%; padding: 0.65rem; background: var(--black); color: var(--cream); border: none; cursor: pointer; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 1rem; transition: background 0.2s; }
 .filter-btn:hover { background: var(--rust); }
 
-/* Nested category sidebar */
-.sidebar-category-group { margin-bottom: 0.25rem; }
-.sidebar-category-parent { display: flex; align-items: center; justify-content: space-between; width: 100%; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding: 0.5rem 0; text-align: left; transition: color 0.2s; }
+/* Nested category parent rows */
+.sidebar-category-group { margin-bottom: 0; }
+.sidebar-category-parent { display: flex; align-items: center; justify-content: space-between; width: 100%; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 500; letter-spacing: 0.06em; color: var(--muted); padding: 0.45rem 0.4rem 0.45rem 0.7rem; text-align: left; transition: color 0.15s; }
 .sidebar-category-parent:hover { color: var(--black); }
-.sidebar-category-chevron { font-size: 0.85rem; font-weight: 400; opacity: 0.7; }
-.sidebar-subcategories { margin-left: 0.5rem; margin-bottom: 0.5rem; }
+.sidebar-category-chevron { font-size: 0.85rem; font-weight: 300; opacity: 0.7; }
+.sidebar-subcategories { margin-left: 0; margin-bottom: 0.25rem; }
 
 /* LISTINGS */
 .listings-area { flex: 1; min-width: 0; padding: 2rem; }
@@ -488,8 +499,6 @@ html.dark .nav-gender-tab.active { color: #ede5d8; border-bottom-color: #c4622d;
 /* Home page needs extra top padding for gender bar */
 .home-page { padding-top: 114px !important; }
 
-/* Filter checkbox active state */
-.filter-item input[type="checkbox"]:checked { accent-color: var(--rust); }
 
 /* Gender toggle in sell/edit form */
 .gender-toggle { display: flex; gap: 0; border: 1px solid var(--border); overflow: hidden; }
