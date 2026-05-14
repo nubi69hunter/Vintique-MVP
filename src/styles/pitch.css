@@ -193,6 +193,7 @@ body.pitch-active::before {
   transition: background 0.25s, transform 0.15s;
   text-decoration: none;
   display: inline-block;
+  width: fit-content;
 }
 .pitch-root .btn-primary:hover { background: var(--rust); transform: translateY(-1px); }
 
@@ -210,6 +211,7 @@ body.pitch-active::before {
   text-decoration: none;
   display: inline-block;
   background: transparent;
+  width: fit-content;
 }
 .pitch-root .btn-ghost:hover { background: var(--black); color: var(--cream); }
 
