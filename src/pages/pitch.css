@@ -1,0 +1,1067 @@
+/* ============================================================
+   PITCH PAGE — all selectors scoped to .pitch-page
+   Scaled ~125% vs the original landing page
+   ============================================================ */
+
+.pitch-page {
+  background: #F5F0E8;
+  color: #141210;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+  cursor: crosshair;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* ── Cursor ── */
+.pitch-page .p-cursor {
+  width: 8px;
+  height: 8px;
+  background: #B85C3A;
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 10000;
+  transition: transform 0.1s;
+  mix-blend-mode: multiply;
+}
+
+/* ── Nav ── */
+.pitch-page .p-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 3.75rem;
+  transition: background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+.pitch-page .p-nav.scrolled {
+  background: rgba(245,240,232,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.pitch-page .p-nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.25rem;
+  letter-spacing: 0.08em;
+  color: #fff;
+  mix-blend-mode: difference;
+  text-decoration: none;
+}
+
+.pitch-page .p-nav.scrolled .p-nav-logo {
+  color: #141210;
+  mix-blend-mode: normal;
+}
+
+.pitch-page .p-nav-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pitch-page .p-nav-links a {
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fff;
+  mix-blend-mode: difference;
+  text-decoration: none;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.pitch-page .p-nav-links a:hover {
+  opacity: 1;
+}
+
+.pitch-page .p-nav.scrolled .p-nav-links a {
+  color: #141210;
+  mix-blend-mode: normal;
+}
+
+.pitch-page .p-nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex-direction: column;
+  gap: 5px;
+  z-index: 1001;
+  padding: 0.5rem;
+  mix-blend-mode: difference;
+}
+
+.pitch-page .p-nav-toggle span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: #fff;
+  transition: all 0.3s ease-in-out;
+}
+
+.pitch-page .p-nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.pitch-page .p-nav-toggle.open span:nth-child(2) { opacity: 0; }
+.pitch-page .p-nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.pitch-page .p-nav.scrolled .p-nav-toggle { mix-blend-mode: normal; }
+.pitch-page .p-nav.scrolled .p-nav-toggle span { background: #141210; }
+
+/* ── Hero ── */
+.pitch-page .p-hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  position: relative;
+  overflow: hidden;
+}
+
+.pitch-page .p-hero-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 10rem 3.75rem 6.25rem;
+  position: relative;
+  z-index: 2;
+}
+
+.pitch-page .p-hero-right {
+  position: relative;
+  background: #1C1814;
+  overflow: hidden;
+}
+
+.pitch-page .p-hero-tag {
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #B85C3A;
+  margin-bottom: 1.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.pitch-page .p-hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(6.25rem, 12.5vw, 11.25rem);
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+  color: #141210;
+  margin-bottom: 2.5rem;
+}
+
+.pitch-page .p-hero-title em {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  color: #B85C3A;
+}
+
+.pitch-page .p-hero-desc {
+  font-size: 1.25rem;
+  line-height: 1.7;
+  color: #7A7268;
+  max-width: 475px;
+  margin-bottom: 3.75rem;
+}
+
+.pitch-page .p-hero-ctas {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.pitch-page .p-hero-mockup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 325px;
+  animation: p-float 4s ease-in-out infinite;
+}
+
+/* ── Phone Mockup ── */
+.pitch-page .p-phone {
+  width: 325px;
+  background: #1a1612;
+  border-radius: 45px;
+  border: 2.5px solid #333;
+  overflow: hidden;
+  box-shadow: 0 50px 100px rgba(0,0,0,0.6), 0 0 0 1px #2a2520;
+}
+
+.pitch-page .p-phone-notch {
+  height: 35px;
+  background: #1a1612;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pitch-page .p-phone-notch-inner {
+  width: 100px;
+  height: 22px;
+  background: #0d0b09;
+  border-radius: 0 0 17px 17px;
+}
+
+.pitch-page .p-phone-screen {
+  background: #F5F0E8;
+  padding: 0;
+  min-height: 600px;
+}
+
+.pitch-page .p-phone-header {
+  background: #141210;
+  padding: 17px 20px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pitch-page .p-phone-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.375rem;
+  color: #F5F0E8;
+  letter-spacing: 0.08em;
+}
+
+.pitch-page .p-phone-location {
+  font-size: 0.75rem;
+  color: #7A7268;
+  letter-spacing: 0.05em;
+}
+
+.pitch-page .p-phone-search {
+  background: #2a2520;
+  border-radius: 10px;
+  padding: 7px 12px;
+  font-size: 0.75rem;
+  color: #7A7268;
+  margin: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pitch-page .p-phone-cats {
+  display: flex;
+  gap: 7px;
+  padding: 0 20px 12px;
+  overflow: hidden;
+}
+
+.pitch-page .p-phone-cat {
+  background: #1a1612;
+  color: #F5F0E8;
+  font-size: 0.7rem;
+  padding: 5px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.pitch-page .p-phone-cat.active {
+  background: #B85C3A;
+}
+
+.pitch-page .p-phone-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 0 20px 20px;
+}
+
+.pitch-page .p-phone-card {
+  border-radius: 10px;
+  overflow: hidden;
+  background: #e8e3db;
+  position: relative;
+}
+
+.pitch-page .p-phone-badge {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  background: #B85C3A;
+  color: white;
+  font-size: 0.56rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.pitch-page .p-phone-card-img {
+  height: 112px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+}
+
+.pitch-page .p-phone-card-info {
+  padding: 7px 10px 10px;
+}
+
+.pitch-page .p-phone-card-name {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #141210;
+  margin-bottom: 2px;
+  line-height: 1.2;
+}
+
+.pitch-page .p-phone-card-size {
+  font-size: 0.68rem;
+  color: #7A7268;
+}
+
+.pitch-page .p-phone-card-price {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #B85C3A;
+}
+
+/* ── Marquee ── */
+.pitch-page .p-marquee-wrap {
+  background: #141210;
+  overflow: hidden;
+  padding: 1.25rem 0;
+  border-top: 1px solid #2a2520;
+  border-bottom: 1px solid #2a2520;
+}
+
+.pitch-page .p-marquee-track {
+  display: flex;
+  gap: 3rem;
+  animation: p-marquee 18s linear infinite;
+  white-space: nowrap;
+}
+
+.pitch-page .p-marquee-item {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.25rem;
+  letter-spacing: 0.15em;
+  color: #F5F0E8;
+  opacity: 0.4;
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+}
+
+/* ── Stats ── */
+.pitch-page .p-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.pitch-page .p-stat {
+  padding: 4.375rem 3.125rem;
+  border-right: 1px solid rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s;
+}
+
+.pitch-page .p-stat:last-child { border-right: none; }
+
+.pitch-page .p-stat:hover { background: #141210; }
+.pitch-page .p-stat:hover .p-stat-num,
+.pitch-page .p-stat:hover .p-stat-label { color: #F5F0E8; }
+.pitch-page .p-stat:hover .p-stat-accent { color: #B85C3A; }
+
+.pitch-page .p-stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 4.375rem;
+  line-height: 1;
+  color: #141210;
+  transition: color 0.3s;
+}
+
+.pitch-page .p-stat-accent { color: #B85C3A; transition: color 0.3s; }
+
+.pitch-page .p-stat-label {
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #7A7268;
+  margin-top: 0.625rem;
+  transition: color 0.3s;
+}
+
+/* ── Sections ── */
+.pitch-page .p-section {
+  padding: 8.75rem 3.75rem;
+}
+
+.pitch-page .p-section-eyebrow {
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #B85C3A;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.pitch-page .p-section-eyebrow::before {
+  content: '';
+  display: block;
+  width: 2rem;
+  height: 1px;
+  background: #B85C3A;
+}
+
+.pitch-page .p-section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3.75rem, 7.5vw, 6.875rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  margin-bottom: 5rem;
+  max-width: 750px;
+}
+
+.pitch-page .p-section-title em {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  color: #B85C3A;
+}
+
+/* ── How It Works Steps ── */
+.pitch-page .p-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border: 1px solid rgba(0,0,0,0.12);
+}
+
+.pitch-page .p-step {
+  padding: 3.75rem 2.5rem;
+  border-right: 1px solid rgba(0,0,0,0.12);
+  position: relative;
+  transition: background 0.3s;
+}
+
+.pitch-page .p-step:last-child { border-right: none; }
+.pitch-page .p-step:hover { background: #1C1814; }
+.pitch-page .p-step:hover .p-step-title,
+.pitch-page .p-step:hover .p-step-desc { color: #F5F0E8; }
+.pitch-page .p-step:hover .p-step-num { color: rgba(255,255,255,0.08); }
+
+.pitch-page .p-step-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 6.25rem;
+  line-height: 1;
+  color: rgba(0,0,0,0.06);
+  margin-bottom: 1.875rem;
+  transition: color 0.3s;
+}
+
+.pitch-page .p-step-icon { font-size: 2.25rem; margin-bottom: 1.25rem; }
+
+.pitch-page .p-step-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  color: #141210;
+  margin-bottom: 1rem;
+  transition: color 0.3s;
+}
+
+.pitch-page .p-step-desc {
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: #7A7268;
+  transition: color 0.3s;
+}
+
+/* ── Opportunity ── */
+.pitch-page .p-opportunity {
+  background: #1C1814;
+  color: #F5F0E8;
+  padding: 8.75rem 3.75rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7.5rem;
+  align-items: center;
+}
+
+.pitch-page .p-opp-eyebrow {
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #B85C3A;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.pitch-page .p-opp-eyebrow::before {
+  content: '';
+  display: block;
+  width: 2rem;
+  height: 1px;
+  background: #B85C3A;
+}
+
+.pitch-page .p-opp-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3.75rem, 6.25vw, 5.625rem);
+  line-height: 1;
+  margin-bottom: 2.5rem;
+}
+
+.pitch-page .p-opp-title em {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  color: #B85C3A;
+}
+
+.pitch-page .p-opp-desc {
+  font-size: 1.25rem;
+  line-height: 1.8;
+  color: rgba(245,240,232,0.65);
+  margin-bottom: 3.125rem;
+}
+
+.pitch-page .p-opp-points { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.pitch-page .p-opp-point { display: flex; gap: 1.25rem; align-items: flex-start; }
+
+.pitch-page .p-opp-point-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #B85C3A;
+  flex-shrink: 0;
+  margin-top: 0.6rem;
+}
+
+.pitch-page .p-opp-point-text {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: rgba(245,240,232,0.75);
+}
+
+.pitch-page .p-opp-point-text strong {
+  color: #F5F0E8;
+  font-weight: 500;
+}
+
+.pitch-page .p-opp-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1.875rem;
+}
+
+.pitch-page .p-competitor-card {
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 1.875rem;
+  position: relative;
+  transition: border-color 0.25s;
+}
+
+.pitch-page .p-competitor-card:hover { border-color: rgba(255,255,255,0.2); }
+
+.pitch-page .p-comp-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+}
+
+.pitch-page .p-comp-status {
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 10px;
+  position: absolute;
+  top: 1.875rem;
+  right: 1.875rem;
+  z-index: 1;
+}
+
+.pitch-page .p-status-gone { background: rgba(184,92,58,0.2); color: #B85C3A; }
+.pitch-page .p-status-weak { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4); }
+
+.pitch-page .p-comp-desc {
+  font-size: 1rem;
+  color: rgba(245,240,232,0.45);
+  line-height: 1.5;
+}
+
+.pitch-page .p-vintique-card {
+  border: 1px solid #B85C3A;
+  padding: 1.875rem;
+  background: rgba(184,92,58,0.08);
+}
+
+/* ── Trust ── */
+.pitch-page .p-trust {
+  padding: 8.75rem 3.75rem;
+  background: #F5F0E8;
+}
+
+.pitch-page .p-trust-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background: rgba(0,0,0,0.08);
+  margin-top: 1.25rem;
+}
+
+.pitch-page .p-trust-item {
+  background: #F5F0E8;
+  padding: 3.75rem 3.125rem;
+  transition: background 0.3s;
+}
+
+.pitch-page .p-trust-item:hover { background: #141210; }
+.pitch-page .p-trust-item:hover .p-trust-title,
+.pitch-page .p-trust-item:hover .p-trust-desc { color: #F5F0E8; }
+
+.pitch-page .p-trust-icon { font-size: 2.5rem; margin-bottom: 1.875rem; }
+
+.pitch-page .p-trust-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.625rem;
+  color: #141210;
+  margin-bottom: 1rem;
+  transition: color 0.3s;
+}
+
+.pitch-page .p-trust-desc {
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: #7A7268;
+  transition: color 0.3s;
+}
+
+/* ── Tech ── */
+.pitch-page .p-tech {
+  background: #141210;
+  padding: 8.75rem 3.75rem;
+  color: #F5F0E8;
+}
+
+.pitch-page .p-tech-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.875rem;
+  margin-top: 5rem;
+}
+
+.pitch-page .p-tech-card {
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 2.5rem;
+  transition: border-color 0.25s, background 0.25s;
+}
+
+.pitch-page .p-tech-card:hover {
+  border-color: #B85C3A;
+  background: rgba(184,92,58,0.06);
+}
+
+.pitch-page .p-tech-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #B85C3A;
+  margin-bottom: 0.75rem;
+}
+
+.pitch-page .p-tech-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.25rem;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.625rem;
+}
+
+.pitch-page .p-tech-desc {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(245,240,232,0.4);
+}
+
+/* ── Roadmap ── */
+.pitch-page .p-roadmap { padding: 8.75rem 3.75rem; }
+
+.pitch-page .p-timeline {
+  margin-top: 5rem;
+  position: relative;
+}
+
+.pitch-page .p-timeline::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 1px;
+  background: rgba(0,0,0,0.1);
+}
+
+.pitch-page .p-tl-item {
+  display: grid;
+  grid-template-columns: 225px 1fr;
+  gap: 3.75rem;
+  padding: 3.125rem 0 3.125rem 3.125rem;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  position: relative;
+  transition: background 0.25s;
+}
+
+.pitch-page .p-tl-item:hover { background: rgba(0,0,0,0.02); }
+
+.pitch-page .p-tl-item::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 3.75rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #B85C3A;
+}
+
+.pitch-page .p-tl-phase {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #B85C3A;
+  margin-bottom: 0.375rem;
+}
+
+.pitch-page .p-tl-time {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.375rem;
+  letter-spacing: 0.05em;
+  color: #141210;
+}
+
+.pitch-page .p-tl-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  color: #141210;
+  margin-bottom: 1rem;
+}
+
+.pitch-page .p-tl-tasks { display: flex; flex-wrap: wrap; gap: 0.625rem; }
+
+.pitch-page .p-tl-task {
+  font-size: 0.9rem;
+  padding: 5px 15px;
+  background: rgba(0,0,0,0.05);
+  color: #7A7268;
+  border-radius: 20px;
+  letter-spacing: 0.03em;
+}
+
+/* ── Founder ── */
+.pitch-page .p-founder {
+  background: #1C1814;
+  color: #F5F0E8;
+  padding: 8.75rem 3.75rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7.5rem;
+  align-items: center;
+}
+
+.pitch-page .p-founder-quote {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.875rem, 3.75vw, 2.75rem);
+  font-style: italic;
+  line-height: 1.5;
+  color: #F5F0E8;
+  margin-bottom: 2.5rem;
+  position: relative;
+  padding-left: 2.5rem;
+  border-left: 2px solid #B85C3A;
+}
+
+.pitch-page .p-founder-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.75rem;
+  letter-spacing: 0.1em;
+  color: #F5F0E8;
+  margin-bottom: 0.375rem;
+}
+
+.pitch-page .p-founder-title {
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,0.4);
+}
+
+.pitch-page .p-linkedin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,0.5);
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 0.625rem 1.375rem;
+  transition: all 0.2s;
+  margin-top: 1.5rem;
+  display: inline-flex;
+}
+
+.pitch-page .p-linkedin-btn:hover {
+  color: #F5F0E8;
+  border-color: rgba(255,255,255,0.4);
+}
+
+.pitch-page .p-founder-right {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.pitch-page .p-founder-stat {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 1.875rem;
+}
+
+.pitch-page .p-founder-stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.125rem;
+  line-height: 1;
+  color: #B85C3A;
+}
+
+.pitch-page .p-founder-stat-label {
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,0.4);
+  margin-top: 0.375rem;
+}
+
+/* ── CTA ── */
+.pitch-page .p-cta-section {
+  padding: 10rem 3.75rem;
+  text-align: center;
+  background: #F5F0E8;
+  position: relative;
+  overflow: hidden;
+}
+
+.pitch-page .p-cta-bg-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20vw;
+  color: rgba(0,0,0,0.04);
+  white-space: nowrap;
+  pointer-events: none;
+  letter-spacing: -0.02em;
+}
+
+.pitch-page .p-cta-eyebrow {
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #B85C3A;
+  margin-bottom: 1.875rem;
+}
+
+.pitch-page .p-cta-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(4.375rem, 8.75vw, 8.75rem);
+  line-height: 1;
+  color: #141210;
+  margin-bottom: 1.875rem;
+}
+
+.pitch-page .p-cta-title em {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  color: #B85C3A;
+}
+
+.pitch-page .p-cta-desc {
+  font-size: 1.25rem;
+  color: #7A7268;
+  max-width: 600px;
+  margin: 0 auto 3.75rem;
+  line-height: 1.7;
+}
+
+.pitch-page .p-cta-btns {
+  display: flex;
+  gap: 1.25rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Footer ── */
+.pitch-page .p-footer {
+  background: #141210;
+  color: #F5F0E8;
+  padding: 3.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #2a2520;
+}
+
+.pitch-page .p-footer-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.875rem;
+  letter-spacing: 0.08em;
+  color: #F5F0E8;
+}
+
+.pitch-page .p-footer-tagline {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: 1.125rem;
+  color: rgba(245,240,232,0.4);
+}
+
+.pitch-page .p-footer-copy {
+  font-size: 0.9rem;
+  color: rgba(245,240,232,0.3);
+  letter-spacing: 0.05em;
+}
+
+/* ── Buttons ── */
+.pitch-page .p-btn-primary {
+  background: #141210;
+  color: #F5F0E8;
+  padding: 1.25rem 2.75rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.15s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.pitch-page .p-btn-primary:hover {
+  background: #B85C3A;
+  transform: translateY(-1px);
+}
+
+.pitch-page .p-btn-ghost {
+  color: #141210;
+  padding: 1.25rem 2.75rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid #141210;
+  cursor: pointer;
+  transition: all 0.25s;
+  text-decoration: none;
+  display: inline-block;
+  background: transparent;
+}
+
+.pitch-page .p-btn-ghost:hover {
+  background: #141210;
+  color: #F5F0E8;
+}
+
+/* ── Fade Up Animation ── */
+.pitch-page .p-fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.pitch-page .p-fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Keyframes ── */
+@keyframes p-float {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+  50% { transform: translate(-50%, -50%) translateY(-15px); }
+}
+
+@keyframes p-marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ── Mobile ── */
+@media (max-width: 900px) {
+  .pitch-page .p-cursor { display: none !important; }
+
+  .pitch-page .p-nav {
+    position: static !important;
+    flex-wrap: wrap;
+    padding: 1.5rem 1.5rem !important;
+    background: #1C1814 !important;
+  }
+
+  .pitch-page .p-nav-toggle { display: flex; }
+
+  .pitch-page .p-nav-links {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    display: none;
+    margin-top: 1rem;
+  }
+
+  .pitch-page .p-nav-links.open { display: flex !important; }
+
+  .pitch-page .p-hero { grid-template-columns: 1fr; }
+
+  .pitch-page .p-hero-left {
+    padding: 2.5rem 1.5rem 4rem !important;
+    justify-content: flex-start;
+  }
+
+  .pitch-page .p-hero-right { min-height: 650px; }
+
+  .pitch-page .p-stats { grid-template-columns: 1fr 1fr; }
+  .pitch-page .p-steps { grid-template-columns: 1fr 1fr; }
+  .pitch-page .p-opportunity { grid-template-columns: 1fr; gap: 3rem; padding: 5rem 1.5rem; }
+  .pitch-page .p-trust-grid { grid-template-columns: 1fr; }
+  .pitch-page .p-tech-grid { grid-template-columns: 1fr; }
+  .pitch-page .p-founder { grid-template-columns: 1fr; gap: 3rem; padding: 5rem 1.5rem; }
+  .pitch-page .p-section { padding: 5rem 1.5rem; }
+  .pitch-page .p-tl-item { grid-template-columns: 1fr; gap: 0.5rem; padding-left: 2rem; }
+  .pitch-page .p-roadmap { padding: 5rem 1.5rem; }
+  .pitch-page .p-trust { padding: 5rem 1.5rem; }
+  .pitch-page .p-tech { padding: 5rem 1.5rem; }
+  .pitch-page .p-cta-section { padding: 6rem 1.5rem; }
+  .pitch-page .p-footer { flex-direction: column; gap: 1rem; text-align: center; padding: 2.5rem 1.5rem; }
+}

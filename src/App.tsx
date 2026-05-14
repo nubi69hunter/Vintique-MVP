@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import Landing from './pages/Landing';
+import Pitch from './pages/Pitch';
 import ListingDetail from './pages/ListingDetail';
 import Auth from './pages/Auth';
 import Sell from './pages/Sell';
@@ -33,29 +34,41 @@ function OnboardingGuard() {
   return null;
 }
 
+function AppShell() {
+  const location = useLocation();
+  const isPitch = location.pathname === '/pitch';
+
+  return (
+    <>
+      <OnboardingGuard />
+      {!isPitch && <Navbar />}
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/pitch" element={<Pitch />} />
+        <Route path="/market" element={<Home />} />
+        <Route path="/item/:id" element={<ListingDetail />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/sell" element={<Sell />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/inbox" element={<Inbox />} />
+        <Route path="/inbox/:listingId/:otherUserId" element={<Conversation />} />
+        <Route path="/edit-listing/:id" element={<EditListing />} />
+        <Route path="/seller/:sellerId" element={<SellerProfile />} />
+      </Routes>
+      {!isPitch && <Footer />}
+      {!isPitch && <AuthModal />}
+      <Toast />
+    </>
+  );
+}
+
 export default function App() {
   return (
     <AuthProvider>
       <UIProvider>
         <Router>
-          <OnboardingGuard />
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/market" element={<Home />} />
-            <Route path="/item/:id" element={<ListingDetail />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/sell" element={<Sell />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/inbox" element={<Inbox />} />
-            <Route path="/inbox/:listingId/:otherUserId" element={<Conversation />} />
-            <Route path="/edit-listing/:id" element={<EditListing />} />
-            <Route path="/seller/:sellerId" element={<SellerProfile />} />
-          </Routes>
-          <Footer />
-          <AuthModal />
-          <Toast />
+          <AppShell />
         </Router>
       </UIProvider>
     </AuthProvider>
