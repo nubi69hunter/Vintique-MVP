@@ -117,12 +117,9 @@ export default function Onboarding() {
             <div className="form-group">
               <label className="form-label">{t('onboarding.city')}</label>
               <select className="form-select" value={city} onChange={e => setCity(e.target.value)}>
-                <option>Riyadh</option>
-                <option>Jeddah</option>
-                <option>Dammam</option>
-                <option>Mecca</option>
-                <option>Medina</option>
-                <option>Other</option>
+                {(['Riyadh', 'Jeddah', 'Dammam', 'Mecca', 'Medina', 'Other'] as const).map(c => (
+                  <option key={c} value={c}>{t(`cities.${c}`, { defaultValue: c })}</option>
+                ))}
               </select>
             </div>
             <button className="btn-primary" onClick={handleSave} disabled={loading} style={{ marginTop: '0.5rem' }}>

@@ -5,9 +5,6 @@ import { supabase } from '../lib/supabase';
 import { Listing } from '../data';
 import ListingCard from '../components/ListingCard';
 
-// Stable rotations — no Math.random() to avoid re-render jitter
-const ROTS = [-1.8, 1.4, -0.9, 2.1, -1.5, 0.8];
-
 function useReveal(threshold = 0.14) {
   const ref = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
@@ -52,22 +49,16 @@ export default function Landing() {
       .limit(8)
       .then(({ data }) => { if (data) setListings(data); });
 
-    // Slight delay so CSS transitions fire after mount
-    const t = setTimeout(() => setLoaded(true), 60);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setLoaded(true), 60);
+    return () => clearTimeout(timer);
   }, []);
-
-  const heroCards: (Listing | null)[] =
-    listings.length > 0 ? listings.slice(0, 6) : Array(6).fill(null);
 
   return (
     <div className="lh-page">
 
       {/* ── HERO ── */}
       <section className="lh-hero">
-
-        {/* Left — copy */}
-        <div className={`lh-hero-left${loaded ? ' lh-in' : ''}`}>
+        <div className={`lh-hero-card${loaded ? ' lh-in' : ''}`}>
           <p className="lh-eyebrow">{t('landing.eyebrow')}</p>
           <h1 className="lh-headline">
             {t('landing.headline1')}<br />
@@ -90,40 +81,6 @@ export default function Landing() {
             >{t('landing.startSelling')}</Link>
           </div>
         </div>
-
-        {/* Right — live listing grid */}
-        <div className="lh-hero-right">
-          <div className="lh-hgrid">
-            {heroCards.map((listing, i) => (
-              <div
-                key={listing ? listing.id : i}
-                className={`lh-hcard${loaded ? ' lh-hcard-in' : ''}`}
-                style={{
-                  '--rot': `${ROTS[i]}deg`,
-                  '--delay': `${200 + i * 90}ms`,
-                } as React.CSSProperties}
-              >
-                {listing ? (
-                  <Link to={`/item/${listing.id}`} className="lh-hcard-link">
-                    <div className="lh-hcard-img">
-                      {listing.photo_urls?.[0]
-                        ? <img src={listing.photo_urls[0]} alt={listing.title} loading="lazy" />
-                        : <div className="lh-hcard-emoji">{listing.emoji ?? '👗'}</div>
-                      }
-                      <div className="lh-hcard-foot">
-                        <span className="lh-hcard-price">{listing.price} {t('landing.sar')}</span>
-                        <span className="lh-hcard-cond">{listing.condition}</span>
-                      </div>
-                    </div>
-                  </Link>
-                ) : (
-                  <div className="lh-hcard-skeleton" />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
       </section>
 
       {/* ── JUST DROPPED ── */}

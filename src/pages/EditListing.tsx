@@ -204,24 +204,17 @@ export default function EditListing() {
                 <div className="form-group">
                   <label className="form-label">{t('sell.category')}</label>
                   <select className="form-select" value={category} onChange={e => setCategory(e.target.value)}>
-                    <option>Tops & Shirts</option>
-                    <option>Dresses</option>
-                    <option>Pants & Jeans</option>
-                    <option>Outerwear</option>
-                    <option>Shoes</option>
-                    <option>Bags</option>
-                    <option>Accessories</option>
+                    {['Tops & Shirts', 'Dresses', 'Pants & Jeans', 'Outerwear', 'Shoes', 'Bags', 'Accessories'].map(c => (
+                      <option key={c} value={c}>{t(`categories.${c}`, { defaultValue: c })}</option>
+                    ))}
                   </select>
                 </div>
                 <div className="form-group">
                   <label className="form-label">{t('sell.size')}</label>
                   <select className="form-select" value={size} onChange={e => setSize(e.target.value)}>
-                    <option>XS</option>
-                    <option>S</option>
-                    <option>M</option>
-                    <option>L</option>
-                    <option>XL</option>
-                    <option>One size</option>
+                    {(['XS', 'S', 'M', 'L', 'XL', 'One size'] as const).map(s => (
+                      <option key={s} value={s}>{t(`categories.${s}`, { defaultValue: s })}</option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -233,10 +226,9 @@ export default function EditListing() {
                 <div className="form-group">
                   <label className="form-label">{t('sell.condition')}</label>
                   <select className="form-select" value={condition} onChange={e => setCondition(e.target.value)}>
-                    <option>New with tags</option>
-                    <option>Like new</option>
-                    <option>Good</option>
-                    <option>Fair</option>
+                    {(['New with tags', 'Like new', 'Good', 'Fair'] as const).map(c => (
+                      <option key={c} value={c}>{t(`conditions.${c}`, { defaultValue: c })}</option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -263,12 +255,9 @@ export default function EditListing() {
               <div className="form-group">
                 <label className="form-label">{t('sell.shippingFrom')}</label>
                 <select className="form-select" value={city} onChange={e => setCity(e.target.value)}>
-                  <option>Riyadh</option>
-                  <option>Jeddah</option>
-                  <option>Dammam</option>
-                  <option>Mecca</option>
-                  <option>Medina</option>
-                  <option>Other</option>
+                  {(['Riyadh', 'Jeddah', 'Dammam', 'Mecca', 'Medina', 'Other'] as const).map(c => (
+                    <option key={c} value={c}>{t(`cities.${c}`, { defaultValue: c })}</option>
+                  ))}
                 </select>
               </div>
             </div>

@@ -113,7 +113,11 @@ export default function AuthModal() {
                   {loading ? t('auth.loggingIn') : t('auth.login')}
                 </button>
                 <div className="form-divider">{t('auth.or')}</div>
-                <button className="btn-secondary" onClick={() => showToast(t('auth.googleLoginSoon'))}>{t('auth.googleLogin')}</button>
+                <button className="btn-secondary" disabled style={{ opacity: 0.5, pointerEvents: 'none', cursor: 'not-allowed', position: 'relative' }}>
+                  {t('auth.googleLogin')}
+                  {' '}
+                  <span className="google-soon-badge">{t('auth.googleComingSoonBadge')}</span>
+                </button>
               </div>
             )}
 
@@ -142,7 +146,11 @@ export default function AuthModal() {
                   {loading ? t('auth.creatingAccount') : t('auth.createAccount')}
                 </button>
                 <div className="form-divider">{t('auth.or')}</div>
-                <button className="btn-secondary" onClick={() => showToast(t('auth.googleSignupSoon'))}>{t('auth.googleLogin')}</button>
+                <button className="btn-secondary" disabled style={{ opacity: 0.5, pointerEvents: 'none', cursor: 'not-allowed', position: 'relative' }}>
+                  {t('auth.googleLogin')}
+                  {' '}
+                  <span className="google-soon-badge">{t('auth.googleComingSoonBadge')}</span>
+                </button>
               </div>
             )}
           </>

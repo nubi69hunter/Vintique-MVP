@@ -19,6 +19,8 @@ const CONDITIONS = ['New with tags', 'Like new', 'Good', 'Fair'];
 
 export default function Home() {
   const { t } = useTranslation();
+  const catLabel = (key: string) => t(`categories.${key}`, { defaultValue: key });
+  const condLabel = (key: string) => t(`conditions.${key}`, { defaultValue: key });
   const [searchParams] = useSearchParams();
   const gender = searchParams.get('gender') || 'all';
 
@@ -110,7 +112,7 @@ export default function Home() {
                   className="sidebar-category-parent"
                   onClick={() => toggleExpandedCategory(parent)}
                 >
-                  {parent}
+                  {catLabel(parent)}
                   <span className="sidebar-category-chevron">
                     {expandedCategories.includes(parent) ? '−' : '+'}
                   </span>
@@ -123,7 +125,7 @@ export default function Home() {
                         className={`filter-chip${categories.includes(sub) ? ' active' : ''}`}
                         onClick={() => toggle(setCategories, sub)}
                       >
-                        {sub}
+                        {catLabel(sub)}
                       </button>
                     ))}
                   </div>
@@ -148,7 +150,7 @@ export default function Home() {
                 className={`filter-chip${sizes.includes(s) ? ' active' : ''}`}
                 onClick={() => toggle(setSizes, s)}
               >
-                {s}
+                {catLabel(s)}
               </button>
             ))}
           </div>
@@ -169,7 +171,7 @@ export default function Home() {
                 className={`filter-chip${conditions.includes(c) ? ' active' : ''}`}
                 onClick={() => toggle(setConditions, c)}
               >
-                {c}
+                {condLabel(c)}
               </button>
             ))}
           </div>

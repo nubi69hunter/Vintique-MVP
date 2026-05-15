@@ -11,7 +11,7 @@ export default function Footer() {
           <div className="site-footer-tag">{t('footer.tagline')}</div>
         </div>
         <div className="site-footer-contact-group">
-          <a href="tel:+966501176376" className="site-footer-contact">+966 50 117 6376</a>
+          <a href="tel:+966501176376" className="site-footer-contact"><span dir="ltr">+966 50 117 6376</span></a>
           <a href="mailto:srtmusab@gmail.com" className="site-footer-contact">srtmusab@gmail.com</a>
         </div>
       </div>

@@ -149,7 +149,10 @@ export default function Sell() {
               </div>
             )}
             <div className="sell-nav" style={{ justifyContent: 'flex-end' }}>
-              <button className="btn-primary" style={{ width: 'auto', padding: '0.75rem 2rem' }} onClick={() => setStep(2)}>{t('sell.nextDetails')}</button>
+              <button className="btn-primary" style={{ width: 'auto', padding: '0.75rem 2rem' }} onClick={() => {
+                if (photos.length === 0) { showToast(t('sell.atLeastOnePhoto')); return; }
+                setStep(2);
+              }}>{t('sell.nextDetails')}</button>
             </div>
           </div>
         )}
@@ -193,13 +196,13 @@ export default function Sell() {
                       setCategory(CATEGORY_MAP[p][0]);
                     }}
                   >
-                    {Object.keys(CATEGORY_MAP).map(p => <option key={p}>{p}</option>)}
+                    {Object.keys(CATEGORY_MAP).map(p => <option key={p} value={p}>{t(`categories.${p}`, { defaultValue: p })}</option>)}
                   </select>
                 </div>
                 <div className="form-group">
                   <label className="form-label">{t('sell.subCategory')}</label>
                   <select className="form-select" value={category} onChange={e => setCategory(e.target.value)}>
-                    {CATEGORY_MAP[parentCategory].map(s => <option key={s}>{s}</option>)}
+                    {CATEGORY_MAP[parentCategory].map(s => <option key={s} value={s}>{t(`categories.${s}`, { defaultValue: s })}</option>)}
                   </select>
                 </div>
               </div>
@@ -207,21 +210,17 @@ export default function Sell() {
                 <div className="form-group">
                   <label className="form-label">{t('sell.size')}</label>
                   <select className="form-select" value={size} onChange={e => setSize(e.target.value)}>
-                    <option>XS</option>
-                    <option>S</option>
-                    <option>M</option>
-                    <option>L</option>
-                    <option>XL</option>
-                    <option>One size</option>
+                    {(['XS', 'S', 'M', 'L', 'XL', 'One size'] as const).map(s => (
+                      <option key={s} value={s}>{t(`categories.${s}`, { defaultValue: s })}</option>
+                    ))}
                   </select>
                 </div>
                 <div className="form-group">
                   <label className="form-label">{t('sell.condition')}</label>
                   <select className="form-select" value={condition} onChange={e => setCondition(e.target.value)}>
-                    <option>New with tags</option>
-                    <option>Like new</option>
-                    <option>Good</option>
-                    <option>Fair</option>
+                    {(['New with tags', 'Like new', 'Good', 'Fair'] as const).map(c => (
+                      <option key={c} value={c}>{t(`conditions.${c}`, { defaultValue: c })}</option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -252,12 +251,9 @@ export default function Sell() {
               <div className="form-group">
                 <label className="form-label">{t('sell.shippingFrom')}</label>
                 <select className="form-select" value={city} onChange={e => setCity(e.target.value)}>
-                  <option>Riyadh</option>
-                  <option>Jeddah</option>
-                  <option>Dammam</option>
-                  <option>Mecca</option>
-                  <option>Medina</option>
-                  <option>Other</option>
+                  {(['Riyadh', 'Jeddah', 'Dammam', 'Mecca', 'Medina', 'Other'] as const).map(c => (
+                    <option key={c} value={c}>{t(`cities.${c}`, { defaultValue: c })}</option>
+                  ))}
                 </select>
               </div>
             </div>
