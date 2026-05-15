@@ -1,10 +1,12 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useUI } from '../contexts/UIContext';
 import { supabase } from '../lib/supabase';
 
 export default function Onboarding() {
+  const { t } = useTranslation();
   const { user, profile, refreshProfile } = useAuth();
   const { showToast } = useUI();
   const navigate = useNavigate();
@@ -34,7 +36,7 @@ export default function Onboarding() {
   };
 
   const handleSave = async () => {
-    if (!firstName.trim()) { showToast('Please enter your first name.'); return; }
+    if (!firstName.trim()) { showToast(t('onboarding.enterFirstName')); return; }
     try {
       setLoading(true);
       let avatarUrl: string | null = null;
@@ -46,7 +48,7 @@ export default function Onboarding() {
           .from('listing-photos')
           .upload(path, avatarFile, { upsert: true });
         if (uploadError) {
-          showToast('Avatar upload failed: ' + uploadError.message);
+          showToast(t('onboarding.avatarFailed') + uploadError.message);
           return;
         }
         const { data: urlData } = supabase.storage.from('listing-photos').getPublicUrl(path);
@@ -82,8 +84,8 @@ export default function Onboarding() {
     <div className="page" style={{ display: 'block' }}>
       <div className="onboarding-layout">
         <div className="onboarding-box">
-          <div className="onboarding-title">Welcome to Vintique</div>
-          <div className="onboarding-subtitle">Tell us a bit about yourself to get started.</div>
+          <div className="onboarding-title">{t('onboarding.title')}</div>
+          <div className="onboarding-subtitle">{t('onboarding.subtitle')}</div>
 
           <div className="onboarding-avatar-upload" onClick={() => fileInputRef.current?.click()}>
             {avatarPreview ? (
@@ -100,20 +102,20 @@ export default function Onboarding() {
           <div className="sell-form">
             <div className="form-row">
               <div className="form-group">
-                <label className="form-label">First Name *</label>
-                <input className="form-input" type="text" placeholder="First name" value={firstName} onChange={e => setFirstName(e.target.value)} />
+                <label className="form-label">{t('onboarding.firstName')}</label>
+                <input className="form-input" type="text" placeholder={t('onboarding.firstNamePlaceholder')} value={firstName} onChange={e => setFirstName(e.target.value)} />
               </div>
               <div className="form-group">
-                <label className="form-label">Last Name</label>
-                <input className="form-input" type="text" placeholder="Last name" value={lastName} onChange={e => setLastName(e.target.value)} />
+                <label className="form-label">{t('onboarding.lastName')}</label>
+                <input className="form-input" type="text" placeholder={t('onboarding.lastNamePlaceholder')} value={lastName} onChange={e => setLastName(e.target.value)} />
               </div>
             </div>
             <div className="form-group">
-              <label className="form-label">Date of Birth</label>
+              <label className="form-label">{t('onboarding.dob')}</label>
               <input className="form-input" type="date" value={dob} onChange={e => setDob(e.target.value)} />
             </div>
             <div className="form-group">
-              <label className="form-label">City</label>
+              <label className="form-label">{t('onboarding.city')}</label>
               <select className="form-select" value={city} onChange={e => setCity(e.target.value)}>
                 <option>Riyadh</option>
                 <option>Jeddah</option>
@@ -124,7 +126,7 @@ export default function Onboarding() {
               </select>
             </div>
             <button className="btn-primary" onClick={handleSave} disabled={loading} style={{ marginTop: '0.5rem' }}>
-              {loading ? 'Saving...' : 'Complete Profile →'}
+              {loading ? t('onboarding.saving') : t('onboarding.complete')}
             </button>
           </div>
         </div>

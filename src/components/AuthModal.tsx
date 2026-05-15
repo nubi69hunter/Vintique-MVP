@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useUI } from '../contexts/UIContext';
 import { supabase } from '../lib/supabase';
 
 export default function AuthModal() {
+  const { t } = useTranslation();
   const { isAuthModalOpen, closeAuthModal, showToast } = useUI();
   const [tab, setTab] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
@@ -20,14 +22,14 @@ export default function AuthModal() {
   const handleClose = () => { resetForm(); closeAuthModal(); };
 
   const handleLogin = async () => {
-    if (!email || !password) { showToast('Please enter email and password.'); return; }
+    if (!email || !password) { showToast(t('auth.enterEmailPassword')); return; }
     try {
       setLoading(true);
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
         showToast(error.message);
       } else {
-        showToast('Logged in successfully!');
+        showToast(t('auth.loggedIn'));
         resetForm();
         closeAuthModal();
       }
@@ -39,7 +41,7 @@ export default function AuthModal() {
   };
 
   const handleSignup = async () => {
-    if (!email || !password || !username) { showToast('Please fill in all fields.'); return; }
+    if (!email || !password || !username) { showToast(t('auth.fillAllFields')); return; }
     try {
       setLoading(true);
       const { error } = await supabase.auth.signUp({
@@ -74,30 +76,30 @@ export default function AuthModal() {
         {signupDone ? (
           <div style={{ textAlign: 'center', padding: '1rem 0' }}>
             <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📬</div>
-            <div className="modal-title" style={{ marginBottom: '0.5rem' }}>Check your email</div>
+            <div className="modal-title" style={{ marginBottom: '0.5rem' }}>{t('authModal.checkEmail')}</div>
             <div className="modal-body">
-              We sent a verification link to <strong>{email}</strong>. Click it to verify your account and complete your profile.
+              {t('authModal.verificationSent', { email })}
             </div>
             <button className="btn-secondary" style={{ width: 'auto', padding: '0.6rem 2rem' }} onClick={handleClose}>
-              Got it
+              {t('authModal.gotIt')}
             </button>
           </div>
         ) : (
           <>
-            <div className="modal-title" style={{ marginBottom: '1.5rem' }}>Welcome to Vintique</div>
+            <div className="modal-title" style={{ marginBottom: '1.5rem' }}>{t('authModal.welcome')}</div>
             <div className="auth-tabs" style={{ marginBottom: '1.5rem' }}>
-              <button className={`auth-tab ${tab === 'login' ? 'active' : ''}`} onClick={() => setTab('login')}>Login</button>
-              <button className={`auth-tab ${tab === 'signup' ? 'active' : ''}`} onClick={() => setTab('signup')}>Sign Up</button>
+              <button className={`auth-tab ${tab === 'login' ? 'active' : ''}`} onClick={() => setTab('login')}>{t('auth.login')}</button>
+              <button className={`auth-tab ${tab === 'signup' ? 'active' : ''}`} onClick={() => setTab('signup')}>{t('auth.signup')}</button>
             </div>
 
             {tab === 'login' && (
               <div className="auth-form">
                 <div className="form-group">
-                  <label className="form-label">Email</label>
-                  <input className="form-input" type="email" placeholder="you@email.com" value={email} onChange={e => setEmail(e.target.value)} />
+                  <label className="form-label">{t('auth.email')}</label>
+                  <input className="form-input" type="email" placeholder={t('auth.emailPlaceholder')} value={email} onChange={e => setEmail(e.target.value)} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Password</label>
+                  <label className="form-label">{t('auth.password')}</label>
                   <input
                     className="form-input"
                     type="password"
@@ -108,25 +110,25 @@ export default function AuthModal() {
                   />
                 </div>
                 <button className="btn-primary" onClick={handleLogin} disabled={loading}>
-                  {loading ? 'Logging in...' : 'Login'}
+                  {loading ? t('auth.loggingIn') : t('auth.login')}
                 </button>
-                <div className="form-divider">or</div>
-                <button className="btn-secondary" onClick={() => showToast('Google login coming soon!')}>Continue with Google</button>
+                <div className="form-divider">{t('auth.or')}</div>
+                <button className="btn-secondary" onClick={() => showToast(t('auth.googleLoginSoon'))}>{t('auth.googleLogin')}</button>
               </div>
             )}
 
             {tab === 'signup' && (
               <div className="auth-form">
                 <div className="form-group">
-                  <label className="form-label">Username</label>
+                  <label className="form-label">{t('auth.username')}</label>
                   <input className="form-input" type="text" placeholder="@username" value={username} onChange={e => setUsername(e.target.value)} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Email</label>
-                  <input className="form-input" type="email" placeholder="you@email.com" value={email} onChange={e => setEmail(e.target.value)} />
+                  <label className="form-label">{t('auth.email')}</label>
+                  <input className="form-input" type="email" placeholder={t('auth.emailPlaceholder')} value={email} onChange={e => setEmail(e.target.value)} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Password</label>
+                  <label className="form-label">{t('auth.password')}</label>
                   <input
                     className="form-input"
                     type="password"
@@ -137,10 +139,10 @@ export default function AuthModal() {
                   />
                 </div>
                 <button className="btn-primary" onClick={handleSignup} disabled={loading}>
-                  {loading ? 'Creating Account...' : 'Create Account'}
+                  {loading ? t('auth.creatingAccount') : t('auth.createAccount')}
                 </button>
-                <div className="form-divider">or</div>
-                <button className="btn-secondary" onClick={() => showToast('Google signup coming soon!')}>Continue with Google</button>
+                <div className="form-divider">{t('auth.or')}</div>
+                <button className="btn-secondary" onClick={() => showToast(t('auth.googleSignupSoon'))}>{t('auth.googleLogin')}</button>
               </div>
             )}
           </>

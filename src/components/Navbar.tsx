@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useUI } from '../contexts/UIContext';
 import { supabase } from '../lib/supabase';
+import LanguageToggle from './LanguageToggle';
 
 export default function Navbar() {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const { openAuthModal } = useUI();
+  const { t } = useTranslation();
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [scrolled, setScrolled] = useState(false);
@@ -105,21 +108,21 @@ export default function Navbar() {
         <div className="nav-left">
           <Link className="nav-logo" to="/">VIN<span>T</span>IQUE</Link>
           <div className="nav-text-links">
-            <Link className="nav-link" to="/market">Market</Link>
-            <Link className="nav-link" to="/sell">Sell</Link>
+            <Link className="nav-link" to="/market">{t('nav.market')}</Link>
+            <Link className="nav-link" to="/sell">{t('nav.sell')}</Link>
           </div>
         </div>
 
-        {/* Right icon row — always visible, single dark toggle */}
+        {/* Right icon row */}
         <div className="nav-right">
-          <button className="nav-icon-btn" onClick={() => setMobileSearchOpen(o => !o)} aria-label="Search">
+          <button className="nav-icon-btn" onClick={() => setMobileSearchOpen(o => !o)} aria-label={t('nav.search')}>
             <SearchIcon />
           </button>
-          <Link className="nav-icon-btn nav-icon-sell" to="/sell" aria-label="Sell">
+          <Link className="nav-icon-btn nav-icon-sell" to="/sell" aria-label={t('nav.sell')}>
             <PlusIcon />
           </Link>
           {user && (
-            <Link className="nav-icon-btn nav-inbox-btn" to="/inbox" aria-label="Inbox">
+            <Link className="nav-icon-btn nav-inbox-btn" to="/inbox" aria-label={t('nav.inbox')}>
               <InboxIcon />
               {unreadCount > 0 && (
                 <span className="nav-inbox-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
@@ -127,15 +130,16 @@ export default function Navbar() {
             </Link>
           )}
           {user ? (
-            <Link className="nav-icon-btn" to="/profile" aria-label="Profile">
+            <Link className="nav-icon-btn" to="/profile" aria-label={t('nav.profile')}>
               <ProfileIcon />
             </Link>
           ) : (
-            <button className="nav-icon-btn" onClick={openAuthModal} aria-label="Login">
+            <button className="nav-icon-btn" onClick={openAuthModal} aria-label={t('nav.login')}>
               <ProfileIcon />
             </button>
           )}
-          <button className="nav-icon-btn nav-dark-btn" onClick={toggleDark} aria-label="Toggle dark mode">
+          <LanguageToggle />
+          <button className="nav-icon-btn nav-dark-btn" onClick={toggleDark} aria-label={t('nav.toggleDark')}>
             {dark ? <SunIcon /> : <MoonIcon />}
           </button>
         </div>
@@ -143,16 +147,16 @@ export default function Navbar() {
 
       {mobileSearchOpen && (
         <div className="mobile-search-bar">
-          <input type="text" placeholder="Search items, brands, sellers..." autoFocus />
+          <input type="text" placeholder={t('nav.searchPlaceholder')} autoFocus />
           <button onClick={() => setMobileSearchOpen(false)}>✕</button>
         </div>
       )}
 
       {isMarket && (
         <div className="nav-gender-bar">
-          <Link to="/market" className={`nav-gender-tab${activeGender === 'all' ? ' active' : ''}`}>All</Link>
-          <Link to="/market?gender=women" className={`nav-gender-tab${activeGender === 'women' ? ' active' : ''}`}>Women</Link>
-          <Link to="/market?gender=men" className={`nav-gender-tab${activeGender === 'men' ? ' active' : ''}`}>Men</Link>
+          <Link to="/market" className={`nav-gender-tab${activeGender === 'all' ? ' active' : ''}`}>{t('nav.all')}</Link>
+          <Link to="/market?gender=women" className={`nav-gender-tab${activeGender === 'women' ? ' active' : ''}`}>{t('nav.women')}</Link>
+          <Link to="/market?gender=men" className={`nav-gender-tab${activeGender === 'men' ? ' active' : ''}`}>{t('nav.men')}</Link>
         </div>
       )}
     </>

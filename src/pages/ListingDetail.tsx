@@ -1,20 +1,15 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useUI } from '../contexts/UIContext';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { Listing } from '../data';
 import { useAuth } from '../contexts/AuthContext';
 import Price from '../components/Price';
 
-const SOLD_OPTIONS = [
-  'Sold on Vintique',
-  'Sold outside Vintique',
-  'No longer available',
-  'Cancelled — no buyers',
-] as const;
-
 export default function ListingDetail() {
   const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation();
   const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
   const { openAuthModal } = useUI();
@@ -22,8 +17,15 @@ export default function ListingDetail() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  const SOLD_OPTIONS = [
+    t('detail.soldOnVintique'),
+    t('detail.soldOutside'),
+    t('detail.noLongerAvailable'),
+    t('detail.cancelled'),
+  ];
+
   const [soldModalOpen, setSoldModalOpen] = useState(false);
-  const [soldOption, setSoldOption] = useState<string>('Sold on Vintique');
+  const [soldOption, setSoldOption] = useState<string>('');
   const [statusLoading, setStatusLoading] = useState(false);
 
   useEffect(() => {
@@ -33,6 +35,10 @@ export default function ListingDetail() {
     });
   }, [id]);
 
+  useEffect(() => {
+    setSoldOption(t('detail.soldOnVintique'));
+  }, [t]);
+
   const handleMessageSeller = () => {
     if (!listing) return;
     if (!user) { openAuthModal(); return; }
@@ -41,7 +47,7 @@ export default function ListingDetail() {
 
   const handleMarkSold = async () => {
     if (!listing) return;
-    const newStatus = soldOption === 'Sold on Vintique' || soldOption === 'Sold outside Vintique'
+    const newStatus = soldOption === t('detail.soldOnVintique') || soldOption === t('detail.soldOutside')
       ? 'sold'
       : 'removed';
     setStatusLoading(true);
@@ -52,8 +58,8 @@ export default function ListingDetail() {
     }
   };
 
-  if (loading) return <div className="page" style={{ display: 'block' }}><div style={{ padding: '4rem', textAlign: 'center' }}>Loading...</div></div>;
-  if (!listing) return <div className="page" style={{ display: 'block' }}><div style={{ padding: '4rem', textAlign: 'center' }}>Listing not found</div></div>;
+  if (loading) return <div className="page" style={{ display: 'block' }}><div style={{ padding: '4rem', textAlign: 'center' }}>{t('detail.loading')}</div></div>;
+  if (!listing) return <div className="page" style={{ display: 'block' }}><div style={{ padding: '4rem', textAlign: 'center' }}>{t('detail.notFound')}</div></div>;
 
   const photos = listing.photo_urls || [];
   const activePhoto = photos[activeThumb];
@@ -98,8 +104,8 @@ export default function ListingDetail() {
             >
               <div className="seller-avatar">{listing.seller?.charAt(1)?.toUpperCase() || 'S'}</div>
               <div>
-                <div className="seller-name">{listing.seller || 'Seller'}</div>
-                <div className="seller-rating">⭐ 4.9 · {listing.city || 'Saudi Arabia'}</div>
+                <div className="seller-name">{listing.seller || t('detail.seller')}</div>
+                <div className="seller-rating">⭐ 4.9 · {listing.city || t('detail.saudiArabia')}</div>
               </div>
             </Link>
             {!isOwnListing && (
@@ -108,7 +114,7 @@ export default function ListingDetail() {
                 style={{ width: 'auto', padding: '0.4rem 1rem', marginLeft: 'auto', fontSize: '0.7rem' }}
                 onClick={handleMessageSeller}
               >
-                Message
+                {t('detail.message')}
               </button>
             )}
           </div>
@@ -118,48 +124,48 @@ export default function ListingDetail() {
           </div>
           <div className="detail-badges">
             <div className="badge condition">{listing.condition}</div>
-            <div className="badge">Size {listing.size}</div>
+            <div className="badge">{t('detail.size')} {listing.size}</div>
             <div className="badge">{listing.category}</div>
             <div className="badge">{listing.brand}</div>
           </div>
           <div className="detail-desc">{listing.description}</div>
           <div className="detail-meta">
             <div className="meta-item">
-              <div className="meta-label">Brand</div>
+              <div className="meta-label">{t('detail.brand')}</div>
               <div className="meta-value">{listing.brand}</div>
             </div>
             <div className="meta-item">
-              <div className="meta-label">Size</div>
+              <div className="meta-label">{t('detail.size')}</div>
               <div className="meta-value">{listing.size}</div>
             </div>
             <div className="meta-item">
-              <div className="meta-label">Ships from</div>
+              <div className="meta-label">{t('detail.shipsFrom')}</div>
               <div className="meta-value">{listing.city || '—'}</div>
             </div>
             <div className="meta-item">
-              <div className="meta-label">Condition</div>
+              <div className="meta-label">{t('detail.condition')}</div>
               <div className="meta-value">{listing.condition}</div>
             </div>
           </div>
           <div className="detail-actions">
-            <button className="btn-coming-soon" disabled>Buy Now — Coming Soon</button>
-            <div className="coming-soon-note">Secure payments coming soon. Message the seller to arrange a meetup.</div>
+            <button className="btn-coming-soon" disabled>{t('detail.buyNow')}</button>
+            <div className="coming-soon-note">{t('detail.comingSoon')}</div>
             {isOwnListing ? (
               <>
                 <button className="btn-secondary" onClick={() => navigate(`/inbox?listing=${listing.id}`)}>
-                  View Messages
+                  {t('detail.viewMessages')}
                 </button>
                 <button
                   className="btn-secondary"
                   style={{ color: 'var(--rust)' }}
                   onClick={() => setSoldModalOpen(true)}
                 >
-                  Mark as Sold / Remove
+                  {t('detail.markSold')}
                 </button>
               </>
             ) : (
               <button className="btn-secondary" onClick={handleMessageSeller}>
-                Message Seller
+                {t('detail.messageSeller')}
               </button>
             )}
           </div>
@@ -169,7 +175,7 @@ export default function ListingDetail() {
       {/* Mark as Sold / Remove modal */}
       <div className={`modal-overlay${soldModalOpen ? ' open' : ''}`} onClick={() => setSoldModalOpen(false)}>
         <div className="modal" onClick={e => e.stopPropagation()}>
-          <div className="modal-title">What would you like to do?</div>
+          <div className="modal-title">{t('detail.whatToDo')}</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', margin: '1.25rem 0 1.75rem' }}>
             {SOLD_OPTIONS.map(opt => (
               <label key={opt} className="modal-radio-row">
@@ -186,9 +192,9 @@ export default function ListingDetail() {
             ))}
           </div>
           <div className="modal-actions">
-            <button className="btn-secondary" style={{ width: 'auto' }} onClick={() => setSoldModalOpen(false)}>Cancel</button>
+            <button className="btn-secondary" style={{ width: 'auto' }} onClick={() => setSoldModalOpen(false)}>{t('detail.cancel')}</button>
             <button className="btn-primary" style={{ width: 'auto' }} onClick={handleMarkSold} disabled={statusLoading}>
-              {statusLoading ? 'Updating...' : 'Confirm'}
+              {statusLoading ? t('detail.updating') : t('detail.confirm')}
             </button>
           </div>
         </div>

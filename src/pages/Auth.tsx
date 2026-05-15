@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useUI } from '../contexts/UIContext';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 
 export default function Auth() {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,7 +22,7 @@ export default function Auth() {
       if (error) {
         showToast(error.message);
       } else {
-        showToast('Logged in successfully!');
+        showToast(t('auth.loggedIn'));
         navigate('/');
       }
     } catch (error: any) {
@@ -33,8 +35,8 @@ export default function Auth() {
   const handleSignup = async () => {
     try {
       setLoading(true);
-      const { error, data } = await supabase.auth.signUp({ 
-        email, 
+      const { error } = await supabase.auth.signUp({
+        email,
         password,
         options: {
           data: {
@@ -43,11 +45,11 @@ export default function Auth() {
           }
         }
       });
-      
+
       if (error) {
         showToast(error.message);
       } else {
-        showToast('Account created! Welcome to Vintique.');
+        showToast(t('auth.accountCreated'));
         navigate('/');
       }
     } catch (error: any) {
@@ -62,53 +64,53 @@ export default function Auth() {
       <div className="auth-layout">
         <div className="auth-left">
           <div className="auth-quote">
-            Your next favourite <em>outfit</em> is already in someone's wardrobe.
+            {t('auth.quote')}
           </div>
         </div>
         <div className="auth-right">
           <div className="auth-box">
             <div className="auth-tabs">
-              <button className={`auth-tab ${tab === 'login' ? 'active' : ''}`} onClick={() => setTab('login')}>Login</button>
-              <button className={`auth-tab ${tab === 'signup' ? 'active' : ''}`} onClick={() => setTab('signup')}>Sign Up</button>
+              <button className={`auth-tab ${tab === 'login' ? 'active' : ''}`} onClick={() => setTab('login')}>{t('auth.login')}</button>
+              <button className={`auth-tab ${tab === 'signup' ? 'active' : ''}`} onClick={() => setTab('signup')}>{t('auth.signup')}</button>
             </div>
-            
+
             {tab === 'login' && (
               <div className="auth-form">
                 <div className="form-group">
-                  <label className="form-label">Email</label>
-                  <input className="form-input" type="email" placeholder="you@email.com" value={email} onChange={e => setEmail(e.target.value)} />
+                  <label className="form-label">{t('auth.email')}</label>
+                  <input className="form-input" type="email" placeholder={t('auth.emailPlaceholder')} value={email} onChange={e => setEmail(e.target.value)} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Password</label>
+                  <label className="form-label">{t('auth.password')}</label>
                   <input className="form-input" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} />
                 </div>
-                <button className="btn-primary" onClick={handleLogin} disabled={loading}>{loading ? 'Logging in...' : 'Login'}</button>
-                <div className="form-divider">or</div>
-                <button className="btn-secondary" onClick={() => showToast('Google login coming soon!')}>Continue with Google</button>
+                <button className="btn-primary" onClick={handleLogin} disabled={loading}>{loading ? t('auth.loggingIn') : t('auth.login')}</button>
+                <div className="form-divider">{t('auth.or')}</div>
+                <button className="btn-secondary" onClick={() => showToast(t('auth.googleLoginSoon'))}>{t('auth.googleLogin')}</button>
               </div>
             )}
 
             {tab === 'signup' && (
               <div className="auth-form">
                 <div className="form-group">
-                  <label className="form-label">Full Name</label>
-                  <input className="form-input" type="text" placeholder="Your name" value={name} onChange={e => setName(e.target.value)} />
+                  <label className="form-label">{t('auth.fullName')}</label>
+                  <input className="form-input" type="text" placeholder={t('auth.yourName')} value={name} onChange={e => setName(e.target.value)} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Username</label>
+                  <label className="form-label">{t('auth.username')}</label>
                   <input className="form-input" type="text" placeholder="@username" value={username} onChange={e => setUsername(e.target.value)} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Email</label>
-                  <input className="form-input" type="email" placeholder="you@email.com" value={email} onChange={e => setEmail(e.target.value)} />
+                  <label className="form-label">{t('auth.email')}</label>
+                  <input className="form-input" type="email" placeholder={t('auth.emailPlaceholder')} value={email} onChange={e => setEmail(e.target.value)} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Password</label>
+                  <label className="form-label">{t('auth.password')}</label>
                   <input className="form-input" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} />
                 </div>
-                <button className="btn-primary" onClick={handleSignup} disabled={loading}>{loading ? 'Creating Account...' : 'Create Account'}</button>
-                <div className="form-divider">or</div>
-                <button className="btn-secondary" onClick={() => showToast('Google signup coming soon!')}>Continue with Google</button>
+                <button className="btn-primary" onClick={handleSignup} disabled={loading}>{loading ? t('auth.creatingAccount') : t('auth.createAccount')}</button>
+                <div className="form-divider">{t('auth.or')}</div>
+                <button className="btn-secondary" onClick={() => showToast(t('auth.googleSignupSoon'))}>{t('auth.googleLogin')}</button>
               </div>
             )}
           </div>

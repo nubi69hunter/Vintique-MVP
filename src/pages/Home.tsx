@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import ListingCard from '../components/ListingCard';
 import { Listing } from '../data';
 import { supabase } from '../lib/supabase';
@@ -17,6 +18,7 @@ const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'One size'];
 const CONDITIONS = ['New with tags', 'Like new', 'Good', 'Fair'];
 
 export default function Home() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const gender = searchParams.get('gender') || 'all';
 
@@ -25,7 +27,6 @@ export default function Home() {
   const [filterOpen, setFilterOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // All sections collapsed by default
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
 
@@ -40,11 +41,11 @@ export default function Home() {
 
   // Debounce price inputs
   useEffect(() => {
-    const t = setTimeout(() => {
+    const timer = setTimeout(() => {
       setPriceMin(priceMinInput);
       setPriceMax(priceMaxInput);
     }, 500);
-    return () => clearTimeout(t);
+    return () => clearTimeout(timer);
   }, [priceMinInput, priceMaxInput]);
 
   const toggle = (setter: React.Dispatch<React.SetStateAction<string[]>>, value: string) => {
@@ -98,7 +99,7 @@ export default function Home() {
       {/* CATEGORY */}
       <div className="sidebar-section">
         <button className="sidebar-section-header" onClick={() => toggleSection('Category')}>
-          <span>Category{categories.length > 0 && <span className="sidebar-section-badge">{categories.length}</span>}</span>
+          <span>{t('home.category')}{categories.length > 0 && <span className="sidebar-section-badge">{categories.length}</span>}</span>
           <span className="sidebar-section-chevron">{expandedSections.includes('Category') ? '−' : '+'}</span>
         </button>
         {expandedSections.includes('Category') && (
@@ -136,7 +137,7 @@ export default function Home() {
       {/* SIZE */}
       <div className="sidebar-section">
         <button className="sidebar-section-header" onClick={() => toggleSection('Size')}>
-          <span>Size{sizes.length > 0 && <span className="sidebar-section-badge">{sizes.length}</span>}</span>
+          <span>{t('home.size')}{sizes.length > 0 && <span className="sidebar-section-badge">{sizes.length}</span>}</span>
           <span className="sidebar-section-chevron">{expandedSections.includes('Size') ? '−' : '+'}</span>
         </button>
         {expandedSections.includes('Size') && (
@@ -157,7 +158,7 @@ export default function Home() {
       {/* CONDITION */}
       <div className="sidebar-section">
         <button className="sidebar-section-header" onClick={() => toggleSection('Condition')}>
-          <span>Condition{conditions.length > 0 && <span className="sidebar-section-badge">{conditions.length}</span>}</span>
+          <span>{t('home.condition')}{conditions.length > 0 && <span className="sidebar-section-badge">{conditions.length}</span>}</span>
           <span className="sidebar-section-chevron">{expandedSections.includes('Condition') ? '−' : '+'}</span>
         </button>
         {expandedSections.includes('Condition') && (
@@ -178,7 +179,7 @@ export default function Home() {
       {/* PRICE */}
       <div className="sidebar-section">
         <button className="sidebar-section-header" onClick={() => toggleSection('Price')}>
-          <span>Price (SAR){(priceMin || priceMax) && <span className="sidebar-section-badge">1</span>}</span>
+          <span>{t('home.price')}{(priceMin || priceMax) && <span className="sidebar-section-badge">1</span>}</span>
           <span className="sidebar-section-chevron">{expandedSections.includes('Price') ? '−' : '+'}</span>
         </button>
         {expandedSections.includes('Price') && (
@@ -187,7 +188,7 @@ export default function Home() {
               <input
                 className="price-input"
                 type="number"
-                placeholder="Min"
+                placeholder={t('home.min')}
                 value={priceMinInput}
                 onChange={e => setPriceMinInput(e.target.value)}
               />
@@ -195,7 +196,7 @@ export default function Home() {
               <input
                 className="price-input"
                 type="number"
-                placeholder="Max"
+                placeholder={t('home.max')}
                 value={priceMaxInput}
                 onChange={e => setPriceMaxInput(e.target.value)}
               />
@@ -223,7 +224,7 @@ export default function Home() {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
           </svg>
-          {sidebarOpen ? 'Hide Filters' : 'Filters'}
+          {sidebarOpen ? t('home.hideFilters') : t('home.filters')}
           {activeFilterCount > 0 && ` (${activeFilterCount})`}
         </button>
       </div>
@@ -239,7 +240,7 @@ export default function Home() {
                 style={{ marginTop: '1.5rem', background: 'transparent', color: 'var(--rust)', border: '1px solid var(--rust)' }}
                 onClick={clearFilters}
               >
-                Clear all ({activeFilterCount})
+                {t('home.clearAll')} ({activeFilterCount})
               </button>
             )}
           </div>
@@ -250,13 +251,15 @@ export default function Home() {
           <div className="listings-header">
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
               <div className="listings-count">
-                {loading ? 'Loading...' : `${listings.length} item${listings.length !== 1 ? 's' : ''} found`}
+                {loading
+                  ? t('home.loading')
+                  : t('home.itemsFound', { count: listings.length })}
               </div>
               <button className="mobile-filter-btn" onClick={() => setFilterOpen(true)}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
                 </svg>
-                Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ''}
+                {t('home.filters')}{activeFilterCount > 0 ? ` (${activeFilterCount})` : ''}
               </button>
             </div>
             <select
@@ -264,15 +267,15 @@ export default function Home() {
               value={sort}
               onChange={e => setSort(e.target.value)}
             >
-              <option value="newest">Newest first</option>
-              <option value="price_asc">Price: low to high</option>
-              <option value="price_desc">Price: high to low</option>
+              <option value="newest">{t('home.newest')}</option>
+              <option value="price_asc">{t('home.priceLow')}</option>
+              <option value="price_desc">{t('home.priceHigh')}</option>
             </select>
           </div>
           <div className="listings-grid">
             {!loading && listings.length === 0 && (
               <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '4rem 2rem', color: 'var(--muted)' }}>
-                No items found. Try adjusting your filters.
+                {t('home.noItems')}
               </div>
             )}
             {listings.map(listing => (
@@ -287,7 +290,7 @@ export default function Home() {
       <div className={`filter-sheet${filterOpen ? ' open' : ''}`}>
         <div className="filter-sheet-handle" />
         <div className="filter-sheet-header">
-          <span className="filter-sheet-title">Filters</span>
+          <span className="filter-sheet-title">{t('home.filters')}</span>
           <button className="filter-sheet-close" onClick={() => setFilterOpen(false)}>✕</button>
         </div>
         {filterContent}
@@ -297,10 +300,10 @@ export default function Home() {
             style={{ marginBottom: '0.5rem', background: 'transparent', color: 'var(--rust)', border: '1px solid var(--rust)' }}
             onClick={clearFilters}
           >
-            Clear all ({activeFilterCount})
+            {t('home.clearAll')} ({activeFilterCount})
           </button>
         )}
-        <button className="filter-btn" onClick={() => setFilterOpen(false)}>Done</button>
+        <button className="filter-btn" onClick={() => setFilterOpen(false)}>{t('home.done')}</button>
       </div>
     </div>
   );

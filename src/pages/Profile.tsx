@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useUI } from '../contexts/UIContext';
 import { supabase } from '../lib/supabase';
@@ -7,6 +8,7 @@ import { Listing } from '../data';
 import ListingCard from '../components/ListingCard';
 
 export default function Profile() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('Active Listings');
   const navigate = useNavigate();
   const { user, profile, loading: authLoading, signOut } = useAuth();
@@ -14,6 +16,13 @@ export default function Profile() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [listingsLoading, setListingsLoading] = useState(false);
   const [activeCount, setActiveCount] = useState(0);
+
+  const tabs = [
+    { key: 'Active Listings', label: t('profile.activeListings') },
+    { key: 'Sold', label: t('profile.sold') },
+    { key: 'Purchases', label: t('profile.purchases') },
+    { key: 'Reviews', label: t('profile.reviews') },
+  ];
 
   // Fetch active count once for the stats display
   useEffect(() => {
@@ -47,19 +56,17 @@ export default function Profile() {
       });
   }, [user, activeTab]);
 
-  const tabs = ['Active Listings', 'Sold', 'Purchases', 'Reviews'];
-
   if (authLoading) return (
-    <div className="page" style={{ display: 'block', textAlign: 'center', padding: '4rem' }}>Loading...</div>
+    <div className="page" style={{ display: 'block', textAlign: 'center', padding: '4rem' }}>{t('profile.loading')}</div>
   );
 
   if (!user) return (
     <div className="page" style={{ display: 'block', textAlign: 'center', padding: '6rem 2rem' }}>
       <div style={{ fontSize: '1.1rem', marginBottom: '1.5rem', color: 'var(--muted)' }}>
-        Please log in to view your profile.
+        {t('profile.loginRequired')}
       </div>
       <button className="btn-primary" style={{ width: 'auto', padding: '0.75rem 2.5rem' }} onClick={openAuthModal}>
-        Login
+        {t('profile.login')}
       </button>
     </div>
   );
@@ -80,8 +87,8 @@ export default function Profile() {
       return (
         <div className="empty">
           <div className="empty-icon">🛍️</div>
-          <div className="empty-title">Purchases Coming Soon</div>
-          <div className="empty-text">Purchases coming soon when payments launch.</div>
+          <div className="empty-title">{t('profile.purchasesComingSoon')}</div>
+          <div className="empty-text">{t('profile.purchasesText')}</div>
         </div>
       );
     }
@@ -90,8 +97,8 @@ export default function Profile() {
       return (
         <div className="empty">
           <div className="empty-icon">⭐</div>
-          <div className="empty-title">Reviews Coming Soon</div>
-          <div className="empty-text">Reviews coming soon.</div>
+          <div className="empty-title">{t('profile.reviewsComingSoon')}</div>
+          <div className="empty-text">{t('profile.reviewsText')}</div>
         </div>
       );
     }
@@ -99,7 +106,7 @@ export default function Profile() {
     if (listingsLoading) {
       return (
         <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '3rem', color: 'var(--muted)' }}>
-          Loading...
+          {t('profile.loading')}
         </div>
       );
     }
@@ -108,19 +115,19 @@ export default function Profile() {
       return (
         <div className="empty">
           <div className="empty-icon">👗</div>
-          <div className="empty-title">{activeTab === 'Active Listings' ? 'No Listings Yet' : 'No Sold Items'}</div>
+          <div className="empty-title">{activeTab === 'Active Listings' ? t('profile.noListings') : t('profile.noSold')}</div>
           <div className="empty-text">
             {activeTab === 'Active Listings' ? (
               <>
-                List your first item{' '}
+                {t('profile.noListingsText')}{' '}
                 <button
                   style={{ background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', color: 'inherit', padding: 0 }}
                   onClick={() => navigate('/sell')}
                 >
-                  here →
+                  {t('profile.noListingsLink')}
                 </button>
               </>
-            ) : 'Items you sell will appear here.'}
+            ) : t('profile.noSoldText')}
           </div>
         </div>
       );
@@ -137,7 +144,7 @@ export default function Profile() {
                   className="profile-listing-edit"
                   onClick={() => navigate(`/edit-listing/${listing.id}`)}
                 >
-                  Edit
+                  {t('profile.edit')}
                 </button>
               </div>
             )}
@@ -164,32 +171,32 @@ export default function Profile() {
             <div className="profile-stats">
               <div>
                 <div className="profile-stat-num">{activeCount}</div>
-                <div className="profile-stat-label">Listings</div>
+                <div className="profile-stat-label">{t('profile.listings')}</div>
               </div>
               <div>
                 <div className="profile-stat-num">0</div>
-                <div className="profile-stat-label">Sales</div>
+                <div className="profile-stat-label">{t('profile.sales')}</div>
               </div>
               <div>
                 <div className="profile-stat-num">5.0 ⭐</div>
-                <div className="profile-stat-label">Rating</div>
+                <div className="profile-stat-label">{t('profile.rating')}</div>
               </div>
             </div>
           </div>
-          <button className="btn-sell" style={{ marginLeft: 'auto', padding: '0.6rem 1.5rem' }} onClick={() => navigate('/sell')}>+ New Listing</button>
+          <button className="btn-sell" style={{ marginLeft: 'auto', padding: '0.6rem 1.5rem' }} onClick={() => navigate('/sell')}>{t('profile.newListing')}</button>
         </div>
       </div>
       <div className="profile-body">
         <div className="profile-tabs">
           {tabs.map(tab => (
-            <button key={tab} className={`profile-tab ${activeTab === tab ? 'active' : ''}`} onClick={() => setActiveTab(tab)}>
-              {tab}
+            <button key={tab.key} className={`profile-tab ${activeTab === tab.key ? 'active' : ''}`} onClick={() => setActiveTab(tab.key)}>
+              {tab.label}
             </button>
           ))}
         </div>
         {renderTabContent()}
         <div className="profile-signout">
-          <button className="profile-signout-btn" onClick={signOut}>Sign Out</button>
+          <button className="profile-signout-btn" onClick={signOut}>{t('profile.signOut')}</button>
         </div>
       </div>
     </div>

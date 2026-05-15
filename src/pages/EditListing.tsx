@@ -1,10 +1,12 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useUI } from '../contexts/UIContext';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function EditListing() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { showToast } = useUI();
@@ -52,10 +54,10 @@ export default function EditListing() {
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (existingPhotos.length + newPhotos.length + files.length > 8) {
-      showToast('Max 8 photos allowed.');
+      showToast(t('edit.maxPhotos'));
       return;
     }
-    const previews = files.map(f => URL.createObjectURL(f));
+    const previews = (files as File[]).map(f => URL.createObjectURL(f));
     setNewPhotos(prev => [...prev, ...files]);
     setNewPreviews(prev => [...prev, ...previews]);
     e.target.value = '';
@@ -87,7 +89,7 @@ export default function EditListing() {
   const handleSave = async () => {
     if (!user || !id) return;
     if (!title || !price) {
-      showToast('Please fill in title and price.');
+      showToast(t('edit.fillRequired'));
       return;
     }
     try {
@@ -109,7 +111,7 @@ export default function EditListing() {
       if (error) {
         showToast(error.message);
       } else {
-        showToast('Listing updated!');
+        showToast(t('edit.updated'));
         navigate('/profile');
       }
     } catch (err: any) {
@@ -120,7 +122,7 @@ export default function EditListing() {
   };
 
   if (fetching) return (
-    <div className="page" style={{ display: 'block', textAlign: 'center', padding: '4rem' }}>Loading...</div>
+    <div className="page" style={{ display: 'block', textAlign: 'center', padding: '4rem' }}>{t('common.loading')}</div>
   );
 
   const totalPhotos = existingPhotos.length + newPhotos.length;
@@ -129,13 +131,13 @@ export default function EditListing() {
     <div className="page" style={{ display: 'block' }}>
       <div className="sell-layout">
         <div className="sell-header">
-          <div className="sell-title">Edit Listing</div>
-          <div className="sell-subtitle">Update your item details.</div>
+          <div className="sell-title">{t('edit.title')}</div>
+          <div className="sell-subtitle">{t('edit.subtitle')}</div>
         </div>
         <div className="sell-steps">
-          <div className={`sell-step ${step === 1 ? 'active' : step > 1 ? 'done' : ''}`} onClick={() => setStep(1)}>Photos</div>
-          <div className={`sell-step ${step === 2 ? 'active' : step > 2 ? 'done' : ''}`} onClick={() => setStep(2)}>Details</div>
-          <div className={`sell-step ${step === 3 ? 'active' : ''}`} onClick={() => setStep(3)}>Pricing</div>
+          <div className={`sell-step ${step === 1 ? 'active' : step > 1 ? 'done' : ''}`} onClick={() => setStep(1)}>{t('sell.photos')}</div>
+          <div className={`sell-step ${step === 2 ? 'active' : step > 2 ? 'done' : ''}`} onClick={() => setStep(2)}>{t('sell.details')}</div>
+          <div className={`sell-step ${step === 3 ? 'active' : ''}`} onClick={() => setStep(3)}>{t('sell.pricing')}</div>
         </div>
 
         {/* STEP 1: PHOTOS */}
@@ -145,8 +147,8 @@ export default function EditListing() {
             {totalPhotos < 8 && (
               <div className="upload-zone" onClick={() => fileInputRef.current?.click()}>
                 <div className="upload-icon">📸</div>
-                <div className="upload-text">Tap to add photos</div>
-                <div className="upload-subtext">JPG, PNG up to 10MB · Up to 8 photos</div>
+                <div className="upload-text">{t('edit.tapAdd')}</div>
+                <div className="upload-subtext">{t('sell.photoHint')}</div>
               </div>
             )}
             {(existingPhotos.length > 0 || newPreviews.length > 0) && (
@@ -166,7 +168,7 @@ export default function EditListing() {
               </div>
             )}
             <div className="sell-nav" style={{ justifyContent: 'flex-end' }}>
-              <button className="btn-primary" style={{ width: 'auto', padding: '0.75rem 2rem' }} onClick={() => setStep(2)}>Next — Details →</button>
+              <button className="btn-primary" style={{ width: 'auto', padding: '0.75rem 2rem' }} onClick={() => setStep(2)}>{t('sell.nextDetails')}</button>
             </div>
           </div>
         )}
@@ -176,15 +178,15 @@ export default function EditListing() {
           <div className="sell-section active">
             <div className="sell-form">
               <div className="form-group">
-                <label className="form-label">Title</label>
-                <input className="form-input" type="text" placeholder="e.g. Zara Linen Blazer, Beige" value={title} onChange={e => setTitle(e.target.value)} />
+                <label className="form-label">{t('sell.titleLabel')}</label>
+                <input className="form-input" type="text" placeholder={t('sell.titlePlaceholder')} value={title} onChange={e => setTitle(e.target.value)} />
               </div>
               <div className="form-group">
-                <label className="form-label">Description</label>
-                <textarea className="form-textarea" placeholder="Describe the item — condition, fit, any flaws, measurements..." value={description} onChange={e => setDescription(e.target.value)}></textarea>
+                <label className="form-label">{t('sell.description')}</label>
+                <textarea className="form-textarea" placeholder={t('sell.descPlaceholder')} value={description} onChange={e => setDescription(e.target.value)}></textarea>
               </div>
               <div className="form-group">
-                <label className="form-label">Gender *</label>
+                <label className="form-label">{t('sell.gender')}</label>
                 <div className="gender-toggle">
                   {(['women', 'men', 'unisex'] as const).map(g => (
                     <button
@@ -193,14 +195,14 @@ export default function EditListing() {
                       className={`gender-toggle-btn${gender === g ? ' active' : ''}`}
                       onClick={() => setGender(g)}
                     >
-                      {g.charAt(0).toUpperCase() + g.slice(1)}
+                      {t(`sell.${g}`)}
                     </button>
                   ))}
                 </div>
               </div>
               <div className="form-row">
                 <div className="form-group">
-                  <label className="form-label">Category</label>
+                  <label className="form-label">{t('sell.category')}</label>
                   <select className="form-select" value={category} onChange={e => setCategory(e.target.value)}>
                     <option>Tops & Shirts</option>
                     <option>Dresses</option>
@@ -212,7 +214,7 @@ export default function EditListing() {
                   </select>
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Size</label>
+                  <label className="form-label">{t('sell.size')}</label>
                   <select className="form-select" value={size} onChange={e => setSize(e.target.value)}>
                     <option>XS</option>
                     <option>S</option>
@@ -225,11 +227,11 @@ export default function EditListing() {
               </div>
               <div className="form-row">
                 <div className="form-group">
-                  <label className="form-label">Brand</label>
-                  <input className="form-input" type="text" placeholder="e.g. Zara, H&M, Nike" value={brand} onChange={e => setBrand(e.target.value)} />
+                  <label className="form-label">{t('sell.brand')}</label>
+                  <input className="form-input" type="text" placeholder={t('sell.brandPlaceholder')} value={brand} onChange={e => setBrand(e.target.value)} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Condition</label>
+                  <label className="form-label">{t('sell.condition')}</label>
                   <select className="form-select" value={condition} onChange={e => setCondition(e.target.value)}>
                     <option>New with tags</option>
                     <option>Like new</option>
@@ -240,8 +242,8 @@ export default function EditListing() {
               </div>
             </div>
             <div className="sell-nav">
-              <button className="btn-secondary" style={{ width: 'auto', padding: '0.75rem 2rem' }} onClick={() => setStep(1)}>← Back</button>
-              <button className="btn-primary" style={{ width: 'auto', padding: '0.75rem 2rem' }} onClick={() => setStep(3)}>Next — Pricing →</button>
+              <button className="btn-secondary" style={{ width: 'auto', padding: '0.75rem 2rem' }} onClick={() => setStep(1)}>{t('sell.back')}</button>
+              <button className="btn-primary" style={{ width: 'auto', padding: '0.75rem 2rem' }} onClick={() => setStep(3)}>{t('sell.nextPricing')}</button>
             </div>
           </div>
         )}
@@ -251,15 +253,15 @@ export default function EditListing() {
           <div className="sell-section active">
             <div className="sell-form">
               <div className="form-group">
-                <label className="form-label">Price (SAR)</label>
+                <label className="form-label">{t('sell.priceLabel')}</label>
                 <input className="form-input" type="number" placeholder="0" style={{ fontSize: '1.5rem', fontFamily: '"Bebas Neue", sans-serif', letterSpacing: '0.05em' }} value={price} onChange={e => setPrice(e.target.value)} />
               </div>
               <div style={{ padding: '1.2rem', background: '#fff', border: '1px solid var(--border)', fontSize: '0.82rem', color: 'var(--muted)', lineHeight: '1.8' }}>
-                <div style={{ fontWeight: 500, color: 'var(--black)', marginBottom: '0.5rem', fontSize: '0.75rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Fee breakdown</div>
-                Listing is free. Vintique takes a 10% commission only when your item sells. Buyer pays shipping via Aramex.
+                <div style={{ fontWeight: 500, color: 'var(--black)', marginBottom: '0.5rem', fontSize: '0.75rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{t('sell.feeBreakdown')}</div>
+                {t('sell.feeText')}
               </div>
               <div className="form-group">
-                <label className="form-label">Shipping from</label>
+                <label className="form-label">{t('sell.shippingFrom')}</label>
                 <select className="form-select" value={city} onChange={e => setCity(e.target.value)}>
                   <option>Riyadh</option>
                   <option>Jeddah</option>
@@ -271,9 +273,9 @@ export default function EditListing() {
               </div>
             </div>
             <div className="sell-nav">
-              <button className="btn-secondary" style={{ width: 'auto', padding: '0.75rem 2rem' }} onClick={() => setStep(2)}>← Back</button>
+              <button className="btn-secondary" style={{ width: 'auto', padding: '0.75rem 2rem' }} onClick={() => setStep(2)}>{t('sell.back')}</button>
               <button className="btn-primary" style={{ width: 'auto', padding: '0.75rem 2rem' }} onClick={handleSave} disabled={loading}>
-                {loading ? 'Saving...' : 'Save Changes'}
+                {loading ? t('edit.saving') : t('edit.save')}
               </button>
             </div>
           </div>

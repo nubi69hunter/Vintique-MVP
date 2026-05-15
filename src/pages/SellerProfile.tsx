@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { Listing } from '../data';
 import ListingCard from '../components/ListingCard';
@@ -14,6 +15,7 @@ interface SellerData {
 }
 
 export default function SellerProfile() {
+  const { t } = useTranslation();
   const { sellerId } = useParams<{ sellerId: string }>();
   const navigate = useNavigate();
   const [seller, setSeller] = useState<SellerData | null>(null);
@@ -33,10 +35,10 @@ export default function SellerProfile() {
   }, [sellerId]);
 
   if (loading) return (
-    <div className="page" style={{ display: 'block', textAlign: 'center', padding: '4rem' }}>Loading...</div>
+    <div className="page" style={{ display: 'block', textAlign: 'center', padding: '4rem' }}>{t('sellerProfile.loading')}</div>
   );
   if (!seller) return (
-    <div className="page" style={{ display: 'block', textAlign: 'center', padding: '4rem' }}>Seller not found</div>
+    <div className="page" style={{ display: 'block', textAlign: 'center', padding: '4rem' }}>{t('sellerProfile.notFound')}</div>
   );
 
   const displayName = [seller.first_name, seller.last_name].filter(Boolean).join(' ') || seller.username || 'Seller';
@@ -56,16 +58,16 @@ export default function SellerProfile() {
           <div>
             <div className="profile-name">{displayName}</div>
             <div className="profile-bio">
-              @{seller.username || 'user'}{seller.city ? ` · ${seller.city}` : ''}
+              @{seller.username || t('sellerProfile.user')}{seller.city ? ` · ${seller.city}` : ''}
             </div>
             <div className="profile-stats">
               <div>
                 <div className="profile-stat-num">{listings.length}</div>
-                <div className="profile-stat-label">Listings</div>
+                <div className="profile-stat-label">{t('sellerProfile.listings')}</div>
               </div>
               <div>
                 <div className="profile-stat-num">5.0 ⭐</div>
-                <div className="profile-stat-label">Rating</div>
+                <div className="profile-stat-label">{t('sellerProfile.rating')}</div>
               </div>
             </div>
           </div>
@@ -74,19 +76,19 @@ export default function SellerProfile() {
             style={{ marginLeft: 'auto', width: 'auto', padding: '0.5rem 1.2rem', color: 'rgba(245,240,232,0.8)', borderColor: 'rgba(245,240,232,0.2)', background: 'transparent' }}
             onClick={() => navigate(-1)}
           >
-            ← Back
+            {t('sellerProfile.back')}
           </button>
         </div>
       </div>
       <div className="profile-body">
         <div style={{ marginBottom: '1.5rem', fontSize: '0.7rem', fontWeight: 500, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)' }}>
-          Active Listings · {listings.length}
+          {t('sellerProfile.activeListings')} · {listings.length}
         </div>
         {listings.length === 0 ? (
           <div className="empty">
             <div className="empty-icon">👗</div>
-            <div className="empty-title">No Listings Yet</div>
-            <div className="empty-text">This seller hasn't listed anything yet.</div>
+            <div className="empty-title">{t('sellerProfile.noListings')}</div>
+            <div className="empty-text">{t('sellerProfile.noListingsText')}</div>
           </div>
         ) : (
           <div className="listings-grid">

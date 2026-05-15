@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { Listing } from '../data';
 import ListingCard from '../components/ListingCard';
@@ -36,6 +37,7 @@ function handleMagnetLeave(e: React.MouseEvent<HTMLAnchorElement>) {
 }
 
 export default function Landing() {
+  const { t } = useTranslation();
   const [listings, setListings] = useState<Listing[]>([]);
   const [loaded, setLoaded] = useState(false);
   const drop = useReveal();
@@ -66,27 +68,26 @@ export default function Landing() {
 
         {/* Left — copy */}
         <div className={`lh-hero-left${loaded ? ' lh-in' : ''}`}>
-          <p className="lh-eyebrow">Saudi Arabia's resale marketplace</p>
+          <p className="lh-eyebrow">{t('landing.eyebrow')}</p>
           <h1 className="lh-headline">
-            Pre-Loved.<br />
-            Now <em className="lh-accent">Yours.</em>
+            {t('landing.headline1')}<br />
+            {t('landing.headline2').split(' ').slice(0, -1).join(' ')}{' '}
+            <em className="lh-accent">{t('landing.headline2').split(' ').pop()}</em>
           </h1>
-          <p className="lh-subhead">
-            Buy and sell pre-loved fashion,<br />safely and instantly.
-          </p>
+          <p className="lh-subhead">{t('landing.subhead')}</p>
           <div className="lh-ctas">
             <Link
               to="/market"
               className="lh-btn-primary"
               onMouseMove={handleMagnetMove}
               onMouseLeave={handleMagnetLeave}
-            >Shop Now</Link>
+            >{t('landing.shopNow')}</Link>
             <Link
               to="/sell"
               className="lh-btn-secondary"
               onMouseMove={handleMagnetMove}
               onMouseLeave={handleMagnetLeave}
-            >Start Selling</Link>
+            >{t('landing.startSelling')}</Link>
           </div>
         </div>
 
@@ -110,7 +111,7 @@ export default function Landing() {
                         : <div className="lh-hcard-emoji">{listing.emoji ?? '👗'}</div>
                       }
                       <div className="lh-hcard-foot">
-                        <span className="lh-hcard-price">{listing.price} SAR</span>
+                        <span className="lh-hcard-price">{listing.price} {t('landing.sar')}</span>
                         <span className="lh-hcard-cond">{listing.condition}</span>
                       </div>
                     </div>
@@ -132,8 +133,8 @@ export default function Landing() {
       >
         <div className="lh-section-inner">
           <div className="lh-section-head">
-            <h2 className="lh-section-title">Just Dropped</h2>
-            <Link to="/market" className="lh-view-all">View All →</Link>
+            <h2 className="lh-section-title">{t('landing.justDropped')}</h2>
+            <Link to="/market" className="lh-view-all">{t('landing.viewAll')}</Link>
           </div>
           <div className="lh-grid">
             {listings.map((listing, i) => (
@@ -165,8 +166,8 @@ export default function Landing() {
                 <polyline points="21 15 16 10 5 21"/>
               </svg>
             </div>
-            <div className="lh-step-title">List your piece</div>
-            <p className="lh-step-desc">Snap a few photos, set your price, go live in minutes.</p>
+            <div className="lh-step-title">{t('landing.step1Title')}</div>
+            <p className="lh-step-desc">{t('landing.step1Desc')}</p>
           </div>
 
           <div className="lh-step">
@@ -176,8 +177,8 @@ export default function Landing() {
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
               </svg>
             </div>
-            <div className="lh-step-title">Connect with buyers</div>
-            <p className="lh-step-desc">Chat directly. Every deal is safe and transparent.</p>
+            <div className="lh-step-title">{t('landing.step2Title')}</div>
+            <p className="lh-step-desc">{t('landing.step2Desc')}</p>
           </div>
 
           <div className="lh-step">
@@ -187,8 +188,8 @@ export default function Landing() {
                 <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
               </svg>
             </div>
-            <div className="lh-step-title">Get paid fast</div>
-            <p className="lh-step-desc">Money in your account, quickly and securely.</p>
+            <div className="lh-step-title">{t('landing.step3Title')}</div>
+            <p className="lh-step-desc">{t('landing.step3Desc')}</p>
           </div>
 
         </div>

@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useUI } from '../contexts/UIContext';
 import { supabase } from '../lib/supabase';
@@ -49,6 +50,7 @@ function Avatar({ avatarUrl, initial, hidden }: { avatarUrl: string | null | und
 }
 
 export default function Conversation() {
+  const { t } = useTranslation();
   const { listingId, otherUserId } = useParams<{ listingId: string; otherUserId: string }>();
   const { user, profile } = useAuth();
   const { openAuthModal } = useUI();
@@ -134,8 +136,8 @@ export default function Conversation() {
 
   if (!user) return (
     <div className="page" style={{ display: 'block', textAlign: 'center', padding: '6rem 2rem' }}>
-      <div style={{ marginBottom: '1.5rem', color: 'var(--muted)' }}>Please log in to view messages.</div>
-      <button className="btn-primary" style={{ width: 'auto', padding: '0.75rem 2.5rem' }} onClick={openAuthModal}>Login</button>
+      <div style={{ marginBottom: '1.5rem', color: 'var(--muted)' }}>{t('conversation.loginRequired')}</div>
+      <button className="btn-primary" style={{ width: 'auto', padding: '0.75rem 2.5rem' }} onClick={openAuthModal}>{t('conversation.login')}</button>
     </div>
   );
 
@@ -176,16 +178,16 @@ export default function Conversation() {
     }
   };
 
-  const otherName = otherProfile?.username ? `@${otherProfile.username}` : 'User';
+  const otherName = otherProfile?.username ? `@${otherProfile.username}` : t('conversation.login');
   const otherInitial = (otherProfile?.first_name ?? otherProfile?.username ?? '?').charAt(0).toUpperCase();
   const myInitial = (profile?.first_name ?? profile?.username ?? user.email ?? '?').charAt(0).toUpperCase();
-  const myName = profile?.username ? `@${profile.username}` : 'You';
+  const myName = profile?.username ? `@${profile.username}` : t('conversation.you');
 
   return (
     <div className="page" style={{ display: 'block' }}>
       <div className="conv-layout">
         <div className="conv-header">
-          <button className="conv-back" onClick={() => navigate('/inbox')}>← Back</button>
+          <button className="conv-back" onClick={() => navigate('/inbox')}>{t('conversation.back')}</button>
           <div className="conv-header-info">
             <Link to={`/seller/${otherUserId}`} className="conv-other-name">{otherName}</Link>
             {listing && (
@@ -207,7 +209,7 @@ export default function Conversation() {
         <div className="conv-messages">
           {messages.length === 0 && (
             <div style={{ textAlign: 'center', color: 'var(--muted)', fontSize: '0.85rem', padding: '2rem' }}>
-              No messages yet — say hello!
+              {t('conversation.noMessages')}
             </div>
           )}
           {messages.map((msg, i) => {
@@ -241,7 +243,7 @@ export default function Conversation() {
                   )}
                   <div className={`conv-bubble${isTemp ? ' temp' : ''}`}>{msg.content}</div>
                   {isLastInGroup && (
-                    <div className="conv-msg-time">{isTemp ? 'Sending…' : formatTime(new Date(msg.created_at))}</div>
+                    <div className="conv-msg-time">{isTemp ? t('conversation.sending') : formatTime(new Date(msg.created_at))}</div>
                   )}
                 </div>
               </div>
@@ -254,12 +256,12 @@ export default function Conversation() {
           <input
             className="conv-input"
             type="text"
-            placeholder="Type a message..."
+            placeholder={t('conversation.typePlaceholder')}
             value={inputVal}
             onChange={e => setInputVal(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && !sending && handleSend()}
           />
-          <button className="conv-send" onClick={handleSend} disabled={sending}>Send</button>
+          <button className="conv-send" onClick={handleSend} disabled={sending}>{t('conversation.send')}</button>
         </div>
       </div>
     </div>
