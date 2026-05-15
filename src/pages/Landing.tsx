@@ -61,7 +61,7 @@ export default function Landing() {
         <div className={`lh-hero-card${loaded ? ' lh-in' : ''}`}>
           <p className="lh-eyebrow">{t('landing.eyebrow')}</p>
           <h1 className="lh-headline">
-            {t('landing.headline1')} {t('landing.headline2')} 🇸🇦
+            {t('landing.headline1')} {t('landing.headline2')}
           </h1>
           <p className="lh-subhead">{t('landing.subhead')}</p>
           <div className="lh-ctas">
