@@ -546,33 +546,33 @@ html.dark .nav-gender-tab.active { color: #ede5d8; border-bottom-color: #c4622d;
   overflow: hidden;
 }
 
-/* Floating card — left side */
+/* Floating card — left side, vertically centered */
 .lh-hero-card {
   position: absolute;
   left: 5vw;
   top: 50%;
-  transform: translateY(calc(-50% + 20px));
+  transform: translateY(-50%);
   z-index: 2;
-  width: 380px;
+  width: 420px;
   max-width: calc(100vw - 10vw);
   background: var(--lp-card-bg);
-  padding: 2rem 2.2rem;
+  padding: 2.8rem 2.8rem;
   opacity: 0;
   transition: opacity 0.7s ease, transform 0.7s ease;
 }
 .lh-hero-card.lh-in {
   opacity: 1;
-  transform: translateY(-50%);
 }
 
-/* Compact headline inside hero card */
+/* Bold commanding headline inside hero card */
 .lh-hero-card .lh-headline {
-  font-size: clamp(1.8rem, 3vw, 2.4rem);
-  line-height: 1.08;
-  margin-bottom: 1rem;
+  font-size: clamp(2.2rem, 4vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 1.2rem;
 }
-.lh-hero-card .lh-eyebrow { margin-bottom: 0.8rem; }
-.lh-hero-card .lh-subhead { font-size: 0.88rem; margin-bottom: 1.8rem; }
+.lh-hero-card .lh-eyebrow { margin-bottom: 1rem; font-size: 0.68rem; }
+.lh-hero-card .lh-subhead { font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.6; }
 
 /* Primary CTA — brand orange in hero card */
 .lh-hero-card .lh-btn-primary {
@@ -860,12 +860,9 @@ html.dark .nav-gender-tab.active { color: #ede5d8; border-bottom-color: #c4622d;
     right: 1.2rem;
     width: auto;
     max-width: 100%;
-    padding: 1.4rem 1.6rem;
-    transform: translateY(calc(-50% + 20px));
+    padding: 2rem 1.8rem;
   }
-  .lh-hero-card.lh-in {
-    transform: translateY(-50%);
-  }
+  .lh-hero-card .lh-headline { font-size: clamp(1.8rem, 5vw, 2.2rem); }
 
   .lh-section { padding: 3rem 1.2rem; }
 
