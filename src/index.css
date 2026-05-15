@@ -191,7 +191,7 @@ html.dark .filter-sheet-handle { background: rgba(237,229,216,0.15); }
 
 /* LISTING CARD */
 .listing-card { cursor: pointer; transition: transform 0.2s; text-decoration: none; color: inherit; display: block; position: relative; }
-.listing-card-overlay { position: absolute; inset: 0; z-index: 0; }
+.listing-card-overlay { position: absolute; inset: 0; z-index: 1; }
 .listing-card:hover { transform: translateY(-2px); }
 .card-img { width: 100%; aspect-ratio: 3/4; background: var(--border); position: relative; overflow: hidden; border-radius: 10px; box-shadow: 0 2px 14px rgba(20,18,16,0.09); }
 .card-img img { width: 100%; height: 100%; object-fit: cover; }
@@ -201,7 +201,7 @@ html.dark .filter-sheet-handle { background: rgba(237,229,216,0.15); }
 .card-title { font-size: 0.9rem; font-weight: 500; margin-bottom: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .card-meta { font-size: 0.76rem; color: var(--muted); margin-bottom: 0.25rem; }
 .card-price { font-family: 'Bebas Neue', sans-serif; font-size: 1.15rem; letter-spacing: 0.05em; color: var(--black); margin-bottom: 0.2rem; display: block; }
-.card-seller { font-size: 0.76rem; color: var(--muted); text-decoration: none; position: relative; z-index: 1; display: block; transition: color 0.15s; }
+.card-seller { font-size: 0.76rem; color: var(--muted); text-decoration: none; position: relative; z-index: 2; display: block; transition: color 0.15s; }
 .card-seller:hover { color: var(--rust); }
 
 /* LISTING DETAIL PAGE */
@@ -546,32 +546,42 @@ html.dark .nav-gender-tab.active { color: #ede5d8; border-bottom-color: #c4622d;
   overflow: hidden;
 }
 
-/* Scrim for readability */
-.lh-hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(20, 18, 16, 0.42);
-  z-index: 1;
-}
-
-/* Floating card — always on physical right */
+/* Floating card — left side */
 .lh-hero-card {
   position: absolute;
-  right: 5vw;
+  left: 5vw;
   top: 50%;
   transform: translateY(calc(-50% + 20px));
   z-index: 2;
-  width: 400px;
+  width: 380px;
   max-width: calc(100vw - 10vw);
   background: var(--lp-card-bg);
-  padding: 2.5rem;
+  padding: 2rem 2.2rem;
   opacity: 0;
   transition: opacity 0.7s ease, transform 0.7s ease;
 }
 .lh-hero-card.lh-in {
   opacity: 1;
   transform: translateY(-50%);
+}
+
+/* Compact headline inside hero card */
+.lh-hero-card .lh-headline {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  line-height: 1.08;
+  margin-bottom: 1rem;
+}
+.lh-hero-card .lh-eyebrow { margin-bottom: 0.8rem; }
+.lh-hero-card .lh-subhead { font-size: 0.88rem; margin-bottom: 1.8rem; }
+
+/* Primary CTA — brand orange in hero card */
+.lh-hero-card .lh-btn-primary {
+  background: var(--lp-accent);
+  color: #fff;
+}
+.lh-hero-card .lh-btn-primary:hover {
+  background: var(--lp-text);
+  color: var(--lp-bg);
 }
 
 .lh-eyebrow {
@@ -846,16 +856,16 @@ html.dark .nav-gender-tab.active { color: #ede5d8; border-bottom-color: #c4622d;
     padding-top: 52px;
   }
   .lh-hero-card {
-    right: 50%;
-    transform: translate(50%, calc(-50% + 20px));
-    width: calc(100vw - 2.4rem);
+    left: 1.2rem;
+    right: 1.2rem;
+    width: auto;
     max-width: 100%;
-    padding: 1.6rem;
+    padding: 1.4rem 1.6rem;
+    transform: translateY(calc(-50% + 20px));
   }
   .lh-hero-card.lh-in {
-    transform: translate(50%, -50%);
+    transform: translateY(-50%);
   }
-  .lh-headline { font-size: clamp(2.2rem, 10vw, 4rem); }
 
   .lh-section { padding: 3rem 1.2rem; }
 
